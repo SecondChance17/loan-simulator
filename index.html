@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン＆ライフプラン総合シミュレーター</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター（詳細金額計算版）</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: #fff;
             padding: 30px;
@@ -163,6 +163,24 @@
             margin-top: 0;
             color: #2c3e50;
         }
+        table.sim-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        table.sim-table th, table.sim-table td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: right;
+        }
+        table.sim-table th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        table.sim-table td:first-child {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -171,7 +189,7 @@
     <!-- ヘッダー（ロゴとタイトル） -->
     <div class="header">
         <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
-        <h1>住宅ローン＆ライフプラン総合シミュレーター（家計・教育・車・修繕トータル診断）</h1>
+        <h1>住宅ローン＆ライフプラン総合シミュレーター（詳細金額・金利変動試算）</h1>
     </div>
 
     <form id="lifePlanForm">
@@ -183,7 +201,7 @@
             <label for="loanType">ローン契約の種類</label>
             <select id="loanType">
                 <option value="single">単独ローン</option>
-                <option value="pair">ペアローン（夫婦それぞれで借入）</option>
+                <option value="pair">ペアローン（夫婦それぞれの借入・リスク分散）</option>
             </select>
         </div>
 
@@ -194,7 +212,7 @@
 
         <div class="form-group">
             <label for="buildingAge">現在の建物の築年数（年）</label>
-            <input type="number" id="buildingAge" placeholder="例：15（築15年なら外壁・屋根・水回りの大規模修繕期に注意）">
+            <input type="number" id="buildingAge" placeholder="例：15（外壁・屋根・水回りの大規模修繕期に注意）">
         </div>
 
         <!-- セクション2：当初契約時の詳細 -->
@@ -207,68 +225,74 @@
 
         <div class="form-group">
             <label for="startRate">当初の金利（％）</label>
-            <input type="number" step="0.01" id="startRate" placeholder="例：1.2（20年前なら1〜2%台、近年の低金利なら0.5%など）">
+            <input type="number" step="0.01" id="startRate" placeholder="例：1.5（過去の高い金利や、当時の固定金利など）">
         </div>
 
         <div class="form-group">
-            <label for="rateType">当時の金利タイプ</label>
+            <label for="rateType">当初の金利タイプ・借り換え履歴</label>
             <select id="rateType">
-                <option value="variable">変動金利</option>
-                <option value="fixed">固定金利（期間選択または全期間固定）</option>
+                <option value="variable">変動金利（金利変動あり）</option>
+                <option value="fixed_to_fixed">固定金利から固定金利へ借り換えを行った</option>
+                <option value="fixed_all">全期間固定金利</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label for="currentMonthlyPayment">現在の毎月の返済額（円）</label>
-            <input type="number" id="currentMonthlyPayment" placeholder="例：95000（現在の実際の月々の支払い）">
+            <label for="currentMonthlyPayment">現在の実際の毎月の返済額（円）</label>
+            <input type="number" id="currentMonthlyPayment" placeholder="例：95000">
         </div>
 
-        <!-- セクション3：銀行からの金利変更通知履歴（最大7回分：5年ごと想定） -->
-        <div class="section-title">3. 金利変更通知の履歴（最大7回分・5年ごとの見直しなど）</div>
-        <p class="note">※銀行から通知された「変更後の適用金利」と「適用開始日付（または時期）」を古い順または分かる範囲でご入力ください。</p>
+        <div class="form-group">
+            <label for="estimatedBalance">現在の推計ローン残高（円）</label>
+            <input type="number" id="estimatedBalance" placeholder="例：22000000（だいたいの残高でOKです）">
+        </div>
+
+        <!-- セクション3：金利変更通知・見直しの履歴（最大7回分：5年ごと想定など） -->
+        <div class="section-title">3. 金利変更・借り換えの履歴（最大7回分）</div>
+        <p class="note">※銀行からの金利変更通知や、固定から固定への借り換え時の「変更後の適用金利」「適用開始時期（例：5年目、10年目など）」をご入力ください。</p>
         
         <div class="sub-group">
             <!-- 1回目 -->
             <div class="rate-history-row">
-                <label>① 1回目見直し</label>
-                <input type="text" id="date1" placeholder="時期/年（例：5年目）" style="flex:1;">
-                <input type="number" step="0.01" id="rate1" placeholder="変更後金利(%)" style="flex:1;">
+                <label>① 1回目</label>
+                <input type="text" id="date1" placeholder="時期（例：5年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate1" placeholder="金利(%)" style="flex:1;">
             </div>
             <!-- 2回目 -->
             <div class="rate-history-row">
-                <label>② 2回目見直し</label>
-                <input type="text" id="date2" placeholder="時期/年（例：10年目）" style="flex:1;">
-                <input type="number" step="0.01" id="rate2" placeholder="変更後金利(%)" style="flex:1;">
+                <label>② 2回目</label>
+                <input type="text" id="date2" placeholder="時期（例：10年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate2" placeholder="金利(%)" style="flex:1;">
             </div>
             <!-- 3回目 -->
             <div class="rate-history-row">
-                <label>③ 3回目見直し</label>
-                <input type="text" id="date3" placeholder="時期/年（例：15年目）" style="flex:1;">
-                <input type="number" step="0.01" id="rate3" placeholder="変更後金利(%)" style="flex:1;">
+                <label>③ 3回目</label>
+                <input type="text" id="date3" placeholder="時期（例：15年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate3" placeholder="金利(%)" style="flex:1;">
             </div>
             <!-- 4回目 -->
             <div class="rate-history-row">
-                <label>④ 4回目見直し</label>
-                <input type="text" id="date4" placeholder="時期/年（例：20年目）" style="flex:1;">
-                <input type="number" step="0.01" id="rate4" placeholder="変更後金利(%)" style="flex:1;">
+                <label>④ 4回目</label>
+                <input type="text" id="date4" placeholder="時期（例：20年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate4" placeholder="金利(%)" style="flex:1;">
             </div>
             <!-- 5回目 -->
             <div class="rate-history-row">
-                <label>⑤ 5回目見直し</label>
-                <input type="text" id="date5" placeholder="時期/年（例：25年目）" style="flex:1;">
-                <input type="number" step="0.01" id="rate5" placeholder="変更後金利(%)" style="flex:1;">
+                <label>⑤ 5回目</label>
+                <input type="text" id="date5" placeholder="時期（例：25年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate5" placeholder="金利(%)" style="flex:1;">
             </div>
             <!-- 6回目 -->
             <div class="rate-history-row">
-                <label>⑥ 6回目見直し</label>
-                <input type="text" id="date6" placeholder="時期/年（例：30年目）" style="flex:1;">
-                <input type="number" step="0.01" id="rate6" placeholder="変更後金利(%)" style="flex:1;">
+                <label>⑥ 6回目</label>
+                <input type="text" id="date6" placeholder="時期（例：30年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate6" placeholder="金利(%)" style="flex:1;">
             </div>
             <!-- 7回目 -->
             <div class="rate-history-row">
-                <label>⑦ 7回目見直し</label>
-                <input type="text" id="date7" placeholder="時期/年（例：35年目）" style="flex:1;">
-                <input type="number" step="0.01" id="rate7" placeholder="変更後金利(%)" style="flex:1;">
+                <label>⑦ 7回目</label>
+                <input type="text" id="date7" placeholder="時期（例：35年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate7" placeholder="金利(%)" style="flex:1;">
             </div>
         </div>
 
@@ -299,65 +323,70 @@
             </div>
         </div>
 
-        <!-- セクション5：変動金利の理解・リスク許容度チェック -->
-        <div class="section-title">5. 変動金利・ライフプランリスク チェックシート</div>
+        <!-- セクション5：理解度・リスク許容度チェックシート -->
+        <div class="section-title">5. ライフプラン・金利リスク チェックシート</div>
         
         <div class="checkbox-group">
             <div class="note">※下の「□」をクリックして、当てはまる項目にチェックしてください。</div>
             
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                金利が上昇した際、毎月の返済額や総返済額が当初想定よりどれだけ増えているか（または今後増えるリスク）を把握している。
+                金利変動や固定から固定への借り換えによって、毎月の返済額における「利息」と「元本」の割合がどう変化しているか把握している。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                車検や数年ごとのマイカー買い替え費用、自動車保険などの維持費を家計予算に組み込んでいる。
+                変動金利における「5年ルール（返済額据置）」や「125%ルール（値上上限）」の仕組みと、それに伴う未払利息のリスクを理解している。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                築年数の経過に伴う「外壁・屋根塗装」「水回り（キッチン・浴室等）の交換」といった大規模修繕費用の積立をしている。
+                車検やマイカー買い替え、自動車保険などの維持費を家計予算にしっかりと組み込んでいる。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                子供の進学（特に高校・大学の入学金や授業料が重なる時期）の教育費ピークに備えた貯蓄ができている。
+                築年数の経過に伴う「外壁・屋根塗装」「水回り交換」といった大規模修繕費用の積立を行っている。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                ペアローンの場合、万が一の収入減や退職・育休時における返済シミュレーションを行っている。
+                子供の進学（高校・大学の入学金や授業料が重なる時期）の教育費ピークに備えた貯蓄ができている。
             </label>
         </div>
 
-        <button type="button" class="btn" onclick="runComprehensiveSimulation()">総合ライフプラン＆ローン診断を実行</button>
+        <button type="button" class="btn" onclick="runDetailedSimulation()">詳細金額＆ライフプラン総合診断を実行</button>
     </form>
 
     <!-- 結果表示エリア -->
     <div id="resultBox" class="result-box">
-        <h3>総合診断結果レポート</h3>
+        <h3>詳細シミュレーション＆診断結果レポート</h3>
         
         <div class="result-section">
-            <h4>1. ローン負担・金利変更の分析</h4>
-            <p id="resLoanAnalysis"></p>
+            <h4>1. 金利変動・借り換えと「利息と元本のバランス」金額試算</h4>
+            <p id="resBalanceAnalysis"></p>
         </div>
 
         <div class="result-section">
-            <h4>2. 住まいの維持（築年数・修繕リスク）</h4>
+            <h4>2. 変動金利のルール（5年・125%）と支払い影響額シミュレーション</h4>
+            <p id="resRuleSimulation"></p>
+        </div>
+
+        <div class="result-section">
+            <h4>3. 住まいの維持（築年数・修繕リスク）</h4>
             <p id="resHousingRisk"></p>
         </div>
 
         <div class="result-section">
-            <h4>3. 教育費・車の維持（ライフプラン総合アドバイス）</h4>
+            <h4>4. 教育費・車の維持（トータルライフプランアドバイス）</h4>
             <p id="resLifePlanAdvice"></p>
         </div>
 
         <div class="result-section">
-            <h4>4. チェックシート総合判定</h4>
+            <h4>5. 総合判定・チェック結果</h4>
             <p id="resCheckSummary"></p>
         </div>
     </div>
 </div>
 
 <script>
-    function runComprehensiveSimulation() {
+    function runDetailedSimulation() {
         const loanType = document.getElementById('loanType').value;
         const currentAge = document.getElementById('currentAge').value;
         const buildingAge = document.getElementById('buildingAge').value;
@@ -365,21 +394,24 @@
         const startRate = document.getElementById('startRate').value;
         const rateType = document.getElementById('rateType').value;
         const currentMonthlyPayment = document.getElementById('currentMonthlyPayment').value;
+        const estimatedBalance = document.getElementById('estimatedBalance').value;
 
-        if(!currentAge || !buildingAge || !startAmount || !startRate || !currentMonthlyPayment) {
-            alert('基本情報（世帯主年齢、築年数、当初借入額、当初金利、現在の月額返済）をすべて入力してください。');
+        if(!currentAge || !buildingAge || !startAmount || !startRate || !currentMonthlyPayment || !estimatedBalance) {
+            alert('基本情報（世帯主年齢、築年数、当初借入額、当初金利、現在の月額返済、現在の推計残高）をすべて入力してください。');
             return;
         }
 
         // 金利変更履歴の収集
         let historyCount = 0;
         let historyText = "";
+        let ratesList = [Number(startRate)];
         for(let i=1; i<=7; i++) {
             let d = document.getElementById('date'+i).value;
             let r = document.getElementById('rate'+i).value;
             if(r !== "") {
                 historyCount++;
-                historyText += `・${d ? d : i+'回目見直し'}: 金利 <strong>${r}%</strong><br>`;
+                ratesList.push(Number(r));
+                historyText += `・${d ? d : i+'回目見直し'}: 適用金利 <strong>${r}%</strong><br>`;
             }
         }
 
@@ -392,67 +424,107 @@
             }
         }
 
-        // チェック数
         const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked').length;
+        const currentMVal = Number(currentMonthlyPayment);
+        const currentBalVal = Number(estimatedBalance);
+        const latestRate = ratesList[ratesList.length - 1];
 
-        // --- 1. ローン・金利分析の生成 ---
-        let loanAnalysisHtml = `
-            ・<strong>契約形態:</strong> ${loanType === 'pair' ? 'ペアローン（夫婦それぞれの収入合算・連帯債務等によるリスク分散と注意が必要）' : '単独ローン'}<br>
-            ・<strong>当初条件:</strong> 借入額 <strong>${Number(startAmount).toLocaleString()}円</strong> / 当初金利 <strong>${startRate}\%</strong> (${rateType === 'variable' ? '変動金利' : '固定金利'})<br>
-            ・<strong>現在の月額返済:</strong> <strong>${Number(currentMonthlyPayment).toLocaleString()}円 / 月</strong><br>
-        `;
-        if(historyCount > 0) {
-            loanAnalysisHtml += `<br><strong>【ご入力いただいた金利変更履歴（計 ${historyCount}回）】</strong><br>` + historyText;
-            loanAnalysisHtml += `<p style="font-size:13px; color:#c0392b; margin-top:5px;">※20年前や低金利期に組まれた方で金利が上昇局面に入ると、未払利息や「5年ルール・125%ルール」の適用による元金スライドの仕組みに注意が必要です。</p>`;
+        // --- 1. 利息と元本のバランス試算 ---
+        // 毎月の利息額の概算 = 現在残高 × (最新金利 / 100) / 12
+        let monthlyInterestApprox = Math.round(currentBalVal * (latestRate / 100) / 12);
+        let monthlyPrincipalApprox = currentMVal - monthlyInterestApprox;
+        if (monthlyPrincipalApprox < 0) monthlyPrincipalApprox = 0;
+
+        let rateTypeDesc = "";
+        if (rateType === 'fixed_to_fixed') {
+            rateTypeDesc = "固定金利から固定金利への借り換えを行っています。金利の切り替わり時に固定金利特有の金利水準の変動があり、返済額や元本・利息の削られ方が変化しています。";
+        } else if (rateType === 'fixed_all') {
+            rateTypeDesc = "全期間固定金利のため金利変動リスクはありませんが、当初の金利水準によっては近年の低金利組と比較して総支払額が高くなっている可能性があります。";
         } else {
-            loanAnalysisHtml += `<br><em>※金利変更履歴の入力はありませんが、今後の金利上昇時には毎月の返済内訳（元本と利息のバランス）の変化に注意してください。</em>`;
+            rateTypeDesc = "変動金利で推移しており、金利改定のたびに利息と元本の配分がダイナミックに変動しています。";
         }
 
-        // --- 2. 住まいの維持（築年数リスク） ---
+        let balanceAnalysisHtml = `
+            ・<strong>契約形態:</strong> ${loanType === 'pair' ? 'ペアローン（夫婦それぞれの借入・収入に応じた返済バランスの管理が必要）' : '単独ローン'}<br>
+            ・<strong>金利タイプ状況:</strong> ${rateTypeDesc}<br>
+            ・<strong>現在の推計残高:</strong> <strong>${currentBalVal.toLocaleString()}円</strong> / <strong>現在の月額返済:</strong> <strong>${currentMVal.toLocaleString()}円</strong><br>
+            ・<strong>直近の適用金利:</strong> <strong>${latestRate}%</strong><br><br>
+            <strong>【現在の月額返済における「利息と元本」の金額バランス試算】</strong><br>
+            <table class="sim-table">
+                <tr><th>項目</th><th>月額金額（概算）</th><th>解説</th></tr>
+                <tr><td>今月の利息分</td><td><strong>約 ${monthlyInterestApprox.toLocaleString()} 円</strong></td><td>残高×金利÷12で算出される、銀行へ支払う利息です。金利が上がるとこの金額が増えます。</td></tr>
+                <tr><td>今月の元本返済分</td><td><strong>約 ${monthlyPrincipalApprox.toLocaleString()} 円</strong></td><td>毎月返済額から利息を引いた残り。実際に借入金が減るスピードです。</td></tr>
+            </table>
+        `;
+        if(historyCount > 0) {
+            balanceAnalysisHtml += `<br><strong>【ご入力いただいた金利・借り換え履歴（計 ${historyCount}回）】</strong><br>` + historyText;
+        }
+
+        // --- 2. 5年ルール・125%ルールの金額シミュレーション ---
+        let ruleSimulationHtml = "";
+        if (rateType === 'variable') {
+            let maxIncreasedPayment = Math.round(currentMVal * 1.25);
+            ruleSimulationHtml = `
+                変動金利で金利が上昇した際、日本の多くの金融機関では以下の2つの激変緩和措置がとられます。<br>
+                1. <strong>5年ルール:</strong> 金利が上がっても、<strong>5年間は毎月の返済額（${currentMVal.toLocaleString()}円）が変わりません。</strong>ただし、金利上昇により「利息分」の割合が増えるため、<strong>元本がほとんど減らない（最悪の場合、利息が返済額を超えて「未払利息」が発生する）</strong>リスクがあります。<br>
+                2. <strong>125%ルール:</strong> 5年ごとの見直し時に返済額を上げる場合でも、<strong>上限はそれまでの1.25倍まで</strong>という制限があります。<br><br>
+                <strong>【もし今、金利上昇により見直しを迎えた場合の試算】</strong><br>
+                ・現在の月額返済: ${currentMVal.toLocaleString()} 円<br>
+                ・125%ルール適用時の<strong>上限月額返済額: 最大 約 ${maxIncreasedPayment.toLocaleString()} 円</strong>（月々約 ${(maxIncreasedPayment - currentMVal).toLocaleString()} 円の負担増）<br>
+                <em>※5年ルールで据え置かれていた分の未払利息や元本未払分が、見直し時に一気に跳ね上がる仕組みに注意が必要です。</em>
+            `;
+        } else {
+            ruleSimulationHtml = `
+                ご選択の「固定金利（または固定から固定への借り換え）」では、原則として固定期間中は金利が変わらないため、5年ルールや125%ルールの適用はありません。<br>
+                ただし、<strong>固定期間が終了して「次の固定金利を選ぶ」または「変動に切り替わる」タイミング</strong>で、当時の金利情勢（市場金利の上昇など）によっては、借り換え後や更新後の毎月の返済額が跳ね上がる可能性があります。<br>
+                あらかじめ固定期間終了のタイミングを確認しておくことが重要です。
+            `;
+        }
+
+        // --- 3. 住まいの維持（築年数リスク） ---
         let bAge = Number(buildingAge);
         let housingRiskHtml = `現在の築年数は <strong>${bAge}年</strong> です。<br>`;
         if (bAge >= 25) {
-            housingRiskHtml += `⚠️ **大規模改修・建て替え検討期:** 給排水管の全面更新、外壁・屋根の大規模改修に加え、設備の寿命（キッチン・浴室・給湯器など2〜3回目の交換）や、将来的な耐震改修・建て替えの資金計画を本格的に考える時期です。`;
+            housingRiskHtml += `⚠️ **大規模改修・建て替え検討期:** 給排水管、外壁・屋根の大規模改修、2〜3回目の設備交換に加え、今後の修繕・維持コストが高騰しやすい時期です。`;
         } else if (bAge >= 15) {
-            housingRiskHtml += `⚠️ **外壁・屋根・水回りの正念場:** 一般的に築10〜15年で外壁塗装や屋根のメンテナンス、ベランダ防水、給湯器や食洗機などの住宅設備交換が重なり、まとまった支出（100万〜200万円以上）が発生しやすいタイミングです。`;
+            housingRiskHtml += `⚠️ **外壁・屋根・水回りの正念場:** 築10〜15年で外壁塗装や屋根メンテナンス、給湯器交換などが重なり、100万〜200万円単位の出費が発生しやすいタイミングです。`;
         } else if (bAge >= 10) {
-            housingRiskHtml += `💡 **初期メンテナンス期:** 最初の外壁・コーキング点検や、シロアリ予防施工、各種設備の保証切れに伴うメンテナンス費用を積立・準備しておくことが推奨されます。`;
+            housingRiskHtml += `💡 **初期メンテナンス期:** シロアリ予防や最初の防水・外壁点検に備えましょう。`;
         } else {
-            housingRiskHtml += `✅ 比較的新しい状態ですが、将来の修繕費（10年ごとのメンテナンス）に向けて月々1〜2万円程度の積立を始めておくと安心です。`;
+            housingRiskHtml += `✅ 比較的新しい状態ですが、将来の修繕費に向けて毎月コツコツ積立を始めておくと安心です。`;
         }
 
-        // --- 3. 教育費・車の維持アドバイス ---
-        let lifePlanHtml = ``;
+        // --- 4. 教育費・車の維持アドバイス ---
+        let lifePlanHtml = "";
         if (kids.length > 0) {
             lifePlanHtml += `<strong>【お子様の教育費について】</strong><br>
-            現在、 ${kids.length}名のお子様（年齢: ${kids.join('歳, ')}歳）がいらっしゃいます。<br>`;
-            
+            現在、${kids.length}名のお子様（年齢: ${kids.join('歳, ')}歳）がいらっしゃいます。<br>`;
             let peakCount = kids.filter(age => age >= 12 && age <= 22).length;
             if (peakCount > 0) {
-                lifePlanHtml += `🚨 <strong>教育費ピーク重なり注意:</strong> 現在または数年以内に、中学・高校・大学の進学が重なる「教育費のピーク」を迎えます。住宅ローンの金利上昇や車検・買い替えが同時に来ると家計を圧迫するため、事前のキャッシュフロー管理が極めて重要です。<br>`;
+                lifePlanHtml += `🚨 <strong>教育費ピーク重なり注意:</strong> 中学・高校・大学の進学が重なる時期です。住宅ローンの利息負担増や車検・買い替えが同時に来ないよう、キャッシュフローに余裕を持たせましょう。<br>`;
             } else {
-                lifePlanHtml += `💡 お子様が小さいうち（または独立前）に、教育費の貯蓄スピードを最大化し、ローン残高の繰上返済用資金と切り分けて管理することをおすすめします。<br>`;
+                lifePlanHtml += `💡 お子様が小さいうち（または独立前）に教育費の貯蓄を加速させましょう。<br>`;
             }
         } else {
-            lifePlanHtml += `お子様の年齢が未入力ですが、ライフプランにおいて教育費は大きな割合を占めます。<br>`;
+            lifePlanHtml += `お子様の年齢が未入力ですが、教育費はライフプランの大きなウェイトを占めます。<br>`;
         }
-
         lifePlanHtml += `<br><strong>【クルマの維持・車検・買い替えについて】</strong><br>
-        地方や郊外では車が生活必需品であり、車検費用（数万〜十数万円）、2〜7年ごとの車両買い替え（150万〜300万円）、自動車税・任意保険が定期的に発生します。ローンの見直しや修繕費と合わせ、<strong>「車用口座」「修繕用口座」「教育用口座」を別々に分けて積立する</strong>のが理想的です。`;
+        車検費用、数年ごとの買い替え費用（150万〜300万円）、保険や税金は家計の定期的な大イベントです。「車用口座」「修繕用口座」「教育用口座」をローン返済口座とは別に分けて管理することをお強くお勧めします。`;
 
-        // --- 4. チェックシート総合判定 ---
+        // --- 5. 総合判定 ---
         let checkSummaryHtml = `チェック項目（5項目中）: <strong>${checkedCount}項目</strong>クリア。<br>`;
         if (checkedCount === 5) {
-            checkSummaryHtml += `✨ 素晴らしい備えです！金利変更、教育費、車、修繕、契約形態のすべてにおいてリスク管理意識が高く、堅実なライフプランが構築できています。`;
+            checkSummaryHtml += `✨ 素晴らしいリスク管理です！金利の仕組み、利息と元本のバランス、修繕・教育・車・借り換えの影響を完璧に把握されています。`;
         } else if (checkedCount >= 3) {
-            checkSummaryHtml += `👍 おおむねポイントを押さえていますが、一部（修繕費や車維持費、金利変動のシミュレーション等）で不確定な部分があります。数年単位のキャッシュフロー表を一度書き出してみることをお勧めします。`;
+            checkSummaryHtml += `👍 重要なポイントを捉えていますが、金利変動時の未払利息リスクや、固定借り換え後の返済内訳の確認をさらに深めておくとより安心です。`;
         } else {
-            checkSummaryHtml += `⚠️ 金利上昇リスク、築年数による修繕、教育費の重なり、車の維持費など、将来の複合的な支出に対して家計が圧迫されるリスクがあります。専門家（FPなど）への相談や、固定金利への一部変更・借換、家計の固定費見直しをご検討ください。`;
+            checkSummaryHtml += `⚠️ 金利変動や固定借り換えによる利息増加、築年数による修繕、教育費や車の出費が重なると家計を圧迫するリスクがあります。一度、詳細なキャッシュフロー表の作成や専門家への相談をご検討ください。`;
         }
 
         // 結果を表示
         const resultBox = document.getElementById('resultBox');
-        document.getElementById('resLoanAnalysis').innerHTML = loanAnalysisHtml;
+        document.getElementById('resBalanceAnalysis').innerHTML = balanceAnalysisHtml;
+        document.getElementById('resRuleSimulation').innerHTML = ruleSimulationHtml;
         document.getElementById('resHousingRisk').innerHTML = housingRiskHtml;
         document.getElementById('resLifePlanAdvice').innerHTML = lifePlanHtml;
         document.getElementById('resCheckSummary').innerHTML = checkSummaryHtml;
