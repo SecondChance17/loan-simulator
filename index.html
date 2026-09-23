@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン＆ライフプラン総合シミュレーター（意思決定・判断支援版）</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.01</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -223,7 +223,7 @@
     <!-- ヘッダー（ロゴとタイトル） -->
     <div class="header">
         <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
-        <h1>住宅ローン＆ライフプラン総合シミュレーター（意思決定支援版）</h1>
+        <h1>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.01</h1>
     </div>
 
     <div class="disclaimer-box">
@@ -310,21 +310,25 @@
             <input type="number" id="remainingYears" placeholder="15" min="1" max="50">
         </div>
 
-        <!-- セクション3：金利変更履歴（最大10回分：経過年数＋金利） -->
-        <div class="section-title">3. 金利見直し・切替履歴（最大10回分）</div>
-        <p class="note">※「見直し時期（経過年数）」と「見直し後金利（％）」を入力してください（該当しない回は空欄）。</p>
+        <!-- セクション3：金利変更履歴（銀行通知書対応・最大10回分） -->
+        <div class="section-title">3. 金利変更・見直し履歴（銀行からの通知書内容を反映・最大10回分）</div>
+        <div class="note">
+            💡 <strong>【銀行から届く「金利変更通知書」や「見直し通知」について】</strong><br>
+            金利変更は必ずしも5年刻みとは限りません（銀行のルールや見直しタイミングにより異なります）。また、5年ルールで月々の支払額が据え置かれている期間であっても、通知書に記載されている通り**「適用金利の変更」**によって利息と元本の内訳（利息の割合増大）が変化しています。<br>
+            銀行から届いた通知書に記載されている**「見直し時点（何年目か）」と「その時の適用金利（％）」**を、古い順に必ず下記に入力してください。
+        </div>
         
         <div class="sub-group">
-            <div class="rate-history-row"><label>1回目</label><input type="number" id="year1" placeholder="経過年(例:5)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate1" placeholder="金利(%):1.2" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>2回目</label><input type="number" id="year2" placeholder="経過年(例:10)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate2" placeholder="金利(%):1.0" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>3回目</label><input type="number" id="year3" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate3" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>4回目</label><input type="number" id="year4" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate4" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>5回目</label><input type="number" id="year5" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate5" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>6回目</label><input type="number" id="year6" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate6" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>7回目</label><input type="number" id="year7" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate7" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>8回目</label><input type="number" id="year8" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate8" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>9回目</label><input type="number" id="year9" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate9" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>10回目</label><input type="number" id="year10" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate10" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>1回目通知</label><input type="number" id="year1" placeholder="経過年(例:5)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate1" placeholder="金利(%):1.2" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>2回目通知</label><input type="number" id="year2" placeholder="経過年(例:10)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate2" placeholder="金利(%):1.0" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>3回目通知</label><input type="number" id="year3" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate3" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>4回目通知</label><input type="number" id="year4" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate4" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>5回目通知</label><input type="number" id="year5" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate5" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>6回目通知</label><input type="number" id="year6" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate6" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>7回目通知</label><input type="number" id="year7" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate7" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>8回目通知</label><input type="number" id="year8" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate8" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>9回目通知</label><input type="number" id="year9" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate9" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>10回目通知</label><input type="number" id="year10" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate10" placeholder="金利(%)" style="flex:1;" min="0"></div>
         </div>
 
         <!-- セクション4：お子様の年齢（最大5名） -->
@@ -348,15 +352,15 @@
             <label class="checkbox-label"><input type="checkbox" name="checkItem">家を長く維持するための修繕費（150万〜300万）や教育費のピークに備えている。</label>
         </div>
 
-        <button type="button" class="btn" onclick="runSimulation()">意思決定支援シミュレーションを実行する</button>
+        <button type="button" class="btn" onclick="runSimulation()">シミュレーションを実行する</button>
     </form>
 
     <!-- 結果表示エリア -->
     <div id="resultBox" class="result-box">
-        <h3>意思決定支援レポート ＆ パターン別アドバイス</h3>
+        <h3>シミュレーション結果レポート ＆ パターン別アドバイス</h3>
         
         <div class="result-section">
-            <h4>1. 金利経緯・見直し履歴ごとの利息推移</h4>
+            <h4>1. 金利変更通知履歴ごとの利息推移（償却検証）</h4>
             <div id="resHistoryTable"></div>
         </div>
 
@@ -433,12 +437,12 @@
             let yVal = document.getElementById('year'+i).value;
             let rVal = document.getElementById('rate'+i).value;
             if(yVal !== "" && rVal !== "") {
-                historyData.push({ year: Number(yVal), label: `${i}回目見直し(${yVal}年目)`, rate: Number(rVal) };)
+                historyData.push({ year: Number(yVal), label: `${i}回目通知(${yVal}年目)`, rate: Number(rVal) });
             }
         }
         historyData.sort((a, b) => a.year - b.year);
 
-        let tableHtml = `<table class="sim-table"><tr><th>タイミング</th><th>適用金利</th><th>推定月利息分（概算）</th></tr>`;
+        let tableHtml = `<table class="sim-table"><tr><th>タイミング</th><th>通知金利</th><th>推定月利息分（概算）</th></tr>`;
         let approxBal = startAmount;
         let currentRunPayment = startPayment;
 
@@ -471,8 +475,6 @@
             trueRequiredPayment = monthlyPrincipal + currentMInterest;
         }
 
-        // 💡 「当初の毎月の返済額（startPayment）」に現在の残高・金利で収めるための【必要残高の逆算】および【必要繰上返済額】の計算
-        // PMT公式から、指定返済額(startPayment)を達成できる許容元本(TargetBalance)を逆算する
         let targetBalance = 0;
         if (rNew > 0) {
             let factor = Math.pow(1 + rNew, remMonths);
@@ -481,8 +483,7 @@
             targetBalance = startPayment * remMonths;
         }
 
-        let neededPrepayment = estimatedBalance - targetBalance; // 現残高から許容元本を引いた分が、当初返済額に戻すために今すぐ必要な繰上返済額
-
+        let neededPrepayment = estimatedBalance - targetBalance;
         let currentMonthlyInterest = Math.round(estimatedBalance * (latestRate / 100) / 12);
         let max125Payment = currentMonthlyPayment * 1.25;
 
@@ -530,7 +531,6 @@
             if(kInput && kInput.value !== "") kids.push(Number(kInput.value));
         }
 
-        // 回答者の意思（チェックボックス）の取得
         const intentMaintain = document.querySelector('input[name="checkIntent"][value="maintain"]').checked;
         const intentSell = document.querySelector('input[name="checkIntent"][value="sell_limit"]').checked;
 
@@ -540,7 +540,7 @@
             lifePlanAdviceHtml += `
                 <div class="strategy-box" style="border-left: 4px solid #27ae60; background:#f0f9f4;">
                     <h4 style="color:#276749; margin-top:0;">🟢 【パターンA：家を維持する道（固定切替 ＆ 繰上返済）を選択された場合】</h4>
-                    ・<strong>今後の金利上昇への防衛策:</strong> さらなる金利上昇リスク（今後＋1%〜＋2%）に備え、負担耐性が限界に達する前に<strong>「固定金利への借り換え」</strong>を検討しましょう。<br>
+                    ・<strong>今後の金利上昇への防衛策:</strong> さらなる金利上昇リスクに備え、負担耐性が限界に達する前に<strong>「固定金利への借り換え」</strong>を検討しましょう。<br>
                     ・<strong>キャッシュ防衛:</strong> 月々の支払いを当初額に近づけるために、上記で算出した<strong>繰上返済（必要額: 約 ${Math.round(neededPrepayment > 0 ? neededPrepayment : 0).toLocaleString()} 円）</strong>を計画的に実行し、元本をスリム化することが有効です。<br>
                     ・<strong>維持コストの確保:</strong> 築 ${buildingAge}年。外壁・屋根・水回り修繕（約 150万〜300万円）の積立をローン返済と並行して維持してください。
                 </div>
