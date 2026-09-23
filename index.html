@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.04</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.05</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -222,7 +222,7 @@
 <div class="container">
     <div class="header">
         <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
-        <h1>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.04</h1>
+        <h1>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.05</h1>
     </div>
 
     <div class="disclaimer-box">
@@ -360,12 +360,12 @@
         <!-- セクション5：回答者の意思確認チェックシート -->
         <div class="section-title">5. 回答者の意思確認・出口戦略チェックシート</div>
         <div class="checkbox-group">
-            <div class="note">※現在の気持ちやご自身の方向性に最も近い項目にチェックを入れてください。</div>
-            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="maintain" checked><strong>【維持を希望】</strong> 金利が上がっても、固定金利への切替や取引銀行への条件変更交渉を活用してこの家に住み続けたい。</label>
+            <div class="note">※ご自身の方向性や考えに当てはまる項目にチェックを入れてください。（複数選択可）</div>
+            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="maintain"><strong>【維持を希望】</strong> 金利が上がっても、固定金利への切替や取引銀行への条件変更交渉を活用してこの家に住み続けたい。</label>
             <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="sell_limit"><strong>【売却を検討】</strong> 返済額が当初の予算を超えた場合や生活が圧迫された場合は、早めに家を売却することを検討している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem" checked>金利上昇局面において「固定金利への切り替え」や「繰上返済」のタイミングを常に模索している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem" checked>売却時にローン残高が売却額を上回る（オーバーローン）リスクや、追い金の可能性を理解している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem" checked>ボーナス払いの変動・減額リスクや、家を長く維持するための修繕費・教育費に備えている。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">金利上昇局面において「固定金利への切り替え」や「繰上返済」のタイミングを常に模索している。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">売却時にローン残高が売却額を上回る（オーバーローン）リスクや、追い金の可能性を理解している。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">ボーナス払いの変動・減額リスクや、家を長く維持するための修繕費・教育費に備えている。</label>
         </div>
 
         <button type="button" class="btn" onclick="runSimulation()">シミュレーションを実行する</button>
@@ -497,23 +497,21 @@
         let rNew = latestRate / 100 / 12;
         let trueRequiredMonthly = 0;
 
-        // ボーナス分を考慮した残高に対する、毎月返済分の理論値を算出
-        // ボーナス返済分が残高全体のどれくらいの割合を占めるかを逆算して調整
-        let totalCurrentAnnual = (currentMonthlyPayment * 12) + (currentBonusPayment * 2);
-        let monthlyShareRatio = (currentMonthlyPayment * 12) / (totalCurrentAnnual > 0 ? totalCurrentAnnual : 1);
-        let balanceForMonthly = estimatedBalance * (bonusPaymentType === 'has_bonus' ? (currentMonthlyPayment * 12 * remainingYears) / (totalCurrentAnnual * remainingYears) : 1);
-        if(isNaN(balanceForMonthly) || balanceForMonthly <= 0) balanceForMonthly = estimatedBalance;
+        let balanceForMonthly = estimatedBalance; 
 
         if (repaymentMethod === 'equal_payment') {
             if(rNew > 0) {
                 let factor = Math.pow(1 + rNew, remMonths);
-                trueRequiredMonthly = estimatedBalance * rNew * factor / (factor - 1) * (currentMonthlyPayment / (currentMonthlyPayment + currentBonusPayment / 6)); 
-                // ※簡易的に月々・ボーナス比率に応じた必要額配分
-                if(bonusPaymentType === 'none') {
-                    trueRequiredMonthly = estimatedBalance * rNew * factor / (factor - 1);
+                trueRequiredMonthly = estimatedBalance * rNew * factor / (factor - 1);
+                if (bonusPaymentType === 'has_bonus') {
+                    // ボーナス返済割合を考慮した毎月必要額の調整
+                    let totalCurAnnual = (currentMonthlyPayment * 12) + (currentBonusPayment * 2);
+                    if (totalCurAnnual > 0) {
+                        trueRequiredMonthly = trueRequiredMonthly * (currentMonthlyPayment * 12 / totalCurAnnual);
+                    }
                 }
             } else {
-                trueRequiredMonthly = estimatedBalance / remMonths * (bonusPaymentType === 'has_bonus' ? 0.7 : 1.0);
+                trueRequiredMonthly = estimatedBalance / remMonths;
             }
         } else {
             let monthlyPrincipal = estimatedBalance / remMonths;
@@ -522,10 +520,8 @@
         }
 
         let max125Monthly = currentMonthlyPayment * 1.25;
-        let actualNext5YearMonthly = Math.min(trueRequiredMonthly, max125Monthly);
 
         let targetBalance = 0;
-        let totalStartAnnual = (startPayment * 12) + (startBonus * 2);
         if (rNew > 0) {
             let factor = Math.pow(1 + rNew, remMonths);
             targetBalance = startPayment * (factor - 1) / (rNew * factor);
@@ -608,14 +604,14 @@
 
         let lifePlanAdviceHtml = `🏠 <strong>回答者の意思に沿った完全網羅型アドバイス（実務的アプローチ）:</strong><br>`;
         lifePlanAdviceHtml += `
-            <div class="strategy-box" style="border-left: 4px solid #27ase60; background:#f0f9f4;">
+            <div class="strategy-box" style="border-left: 4px solid #27ae60; background:#f0f9f4;">
                 <h4 style="color:#276749; margin-top:0;">🟢 【家を維持・対策するための現実的ステップ】</h4>
                 ・<strong>① まずは「今取引のある銀行」への相談が最優先:</strong> 
                 金利上昇やボーナス払いの負担切迫を感じたら、他行へ走る前にまずは現在ローンを借りている取引銀行の窓口へ行きましょう。「固定金利への切り替え」や「条件変更（返済期間の再延長、ボーナス払いの廃止・月々払いへの一本化など）」の相談が可能です。<br><br>
                 ・<strong>② 借り換えにおける「担保評価割れ・フルローン満額不出」のリスク:</strong> 
                 新築時と異なり、現在の建物の築年数経過によって担保評価が低下している場合、他行での借り換え時に残高全額の融資（満額下りる）が受けられず、**差額の現金（自己資金）を用意しなければ借り換えができない**壁があります。そのため、まずは既存行での条件変更交渉が現実的です。<br><br>
                 ・<strong>③ 固定金利切替時・期間延長の調整:</strong> 
-                固定金利は変動より高いため、そのまま切り替えると支払いが跳ね上がります。年齢的に許す範囲での**「返済期間の延長（温存）」**や、ボーナス払いの負担が大きい場合は**「ボーナス払いをなくして月々均等へ再構築する」**などのコンサルティングを銀行員と行うことが、将来の「追い金」を防ぐ最大の防御策となります。
+                固定金利は変動より高いため、そのまま切り替えると支払いが跳ね上がります。年齢的に許す範囲での**「返済期間の延長（温存）」**や、ボーナス払いのが大きい場合は**「ボーナス払いをなくして月々均等へ再構築する」**などのコンサルティングを銀行員と行うことが、将来の「追い金」を防ぐ最大の防御策となります。
             </div>
         `;
 
@@ -624,8 +620,8 @@
         }
 
         const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked, input[name="checkIntent"]:checked').length;
-        let checkSummaryHtml = `チェック項目（意思確認含む）: <strong>${checkedCount}項目</strong>クリア。<br>`;
-        checkSummaryHtml += `✨ ボーナス払いや金利上昇リスクを含めた総合的なライフプラン・返済シミュレーションが完了しました。`;
+        let checkSummaryHtml = `チェック選択数: <strong>${checkedCount}項目</strong>選択中。<br>`;
+        checkSummaryHtml += `✨ ご自身の状況やお考えに合わせて自由にチェックを入れ、シミュレーション結果とあわせてご活用ください。`;
 
         document.getElementById('resHistoryTable').innerHTML = tableHtml;
         document.getElementById('res125Comparison').innerHTML = compHtml;
