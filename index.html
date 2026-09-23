@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン変動金利・総合リスク＆現在地診断シミュレーター</title>
+    <title>住宅ローン変動金利・総合リスク＆現在地診断</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -20,6 +20,24 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .brand-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+        .brand-header img {
+            max-width: 120px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .brand-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #64748b;
+            letter-spacing: 0.05em;
         }
         h1 {
             font-size: 1.4rem;
@@ -128,11 +146,35 @@
             font-weight: bold;
             color: #2563eb;
         }
+        .strong-warning-box {
+            background: #fff1f2;
+            border: 2px dashed #e11d48;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .strong-warning-box h4 {
+            color: #be123c;
+            margin-top: 0;
+            font-size: 1.05rem;
+        }
+        .strong-warning-box p {
+            color: #881337;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- ブランドヘッダー（ロゴ＆名称） -->
+    <div class="brand-header">
+        <img src="logo.jpg" alt="SC17 DOTENBEAR ロゴ">
+        <div class="brand-title">SC17 〜DOTENBEAR〜 Presents</div>
+    </div>
+
     <h1>住宅ローン変動金利・総合リスク＆現在地診断</h1>
     <p class="intro">「いま自分のローンはどこにいて、どこからが危険水域なのか？」金利上昇・ライフイベント・年齢・売却リスクを多角的にシミュレーションします。</p>
 
@@ -208,12 +250,18 @@
             <h3>4. 今すぐ取るべき具体的な対策アドバイス</h3>
             <ul id="adviceList"></ul>
         </div>
+
+        <!-- アプリの確認だけで終わらせないための強力な注意喚起 -->
+        <div class="strong-warning-box">
+            <h4>⚠️【警告】「シミュレーションして満足」で終わらせないために</h4>
+            <p>変動金利の怖さは「気づいた時にはすでに手遅れ（金利急上昇・年齢レッドカード・売却時の大赤字）」になる点です。この結果を見て「まだ大丈夫」フリをするのではなく、今日から家計の固定費を見直し、予備資金を確保し、動ける年齢・動ける金利のうちに次の手を打ってください。運命は行動でしか変わりません。</p>
+        </div>
     </div>
 </div>
 
 <script>
 function runDiagnosis() {
-    const balance = parseFloat(document.getElementById('balance').value) * 10000; // 円
+    const balance = parseFloat(document.getElementById('balance').value) * 10000;
     const years = parseInt(document.getElementById('years').value);
     const currentRate = parseFloat(document.getElementById('currentRate').value) / 100;
     const elapsed = parseInt(document.getElementById('elapsed').value);
@@ -224,7 +272,6 @@ function runDiagnosis() {
     const evHouse = document.getElementById('evHouse').checked;
     const evOtherLoan = document.getElementById('evOtherLoan').checked;
 
-    // 現在の月返済額（元利均等）
     const rCurr = currentRate / 12;
     const nCurr = years * 12;
     let monthlyCurr = 0;
@@ -234,7 +281,6 @@ function runDiagnosis() {
         monthlyCurr = balance * rCurr * Math.pow(1 + rCurr, nCurr) / (Math.pow(1 + rCurr, nCurr) - 1);
     }
 
-    // 金利+1.5%時の月返済額
     const futureRate = currentRate + 0.015;
     const rFut = futureRate / 12;
     let monthlyFut = 0;
@@ -251,7 +297,6 @@ function runDiagnosis() {
     document.getElementById('diffMonthly').innerText = diffM.toLocaleString();
     document.getElementById('diffTotal').innerText = diffT.toLocaleString();
 
-    // リスク要因のカウント
     let riskScore = 0;
     if (diffM > 25000) riskScore += 2;
     else if (diffM > 15000) riskScore += 1;
@@ -259,7 +304,7 @@ function runDiagnosis() {
     if (ageCategory === 50) riskScore += 2;
     else if (ageCategory === 40) riskScore += 1;
 
-    if (elapsed >= 10) riskScore += 1; // 10年以上経つと元金が予定通り減っているかの確認が必要
+    if (elapsed >= 10) riskScore += 1;
 
     let eventCount = 0;
     if (evEdu) eventCount++;
@@ -270,7 +315,6 @@ function runDiagnosis() {
     if (eventCount >= 2) riskScore += 2;
     else if (eventCount === 1) riskScore += 1;
 
-    // 判定とコメント生成
     const levelBox = document.getElementById('dangerLevel');
     const zoneComment = document.getElementById('zoneComment');
     const riskList = document.getElementById('riskList');
@@ -283,7 +327,6 @@ function runDiagnosis() {
     let riskHTML = "";
     let adviceHTML = "";
 
-    // 警告メッセージの構築
     if (riskScore >= 5) {
         levelBox.className = "danger-level level-danger";
         levelBox.innerText = "【危険水域】家計破綻・売却時持ち出しリスクが高まっています";
@@ -298,7 +341,6 @@ function runDiagnosis() {
         zoneText = `現時点でのリスク耐性は比較的高い状態です。ただし、今後の長期的な金利動向やライフステージの変化には注意を払いましょう。`;
     }
 
-    // 将来リスクの列挙
     riskHTML += `<li><strong>「元金が減らない罠」と売却時の持ち出しリスク：</strong> 金利が上がると返済額に占める「利息の割合」が増え、元金の減りが極端に遅くなります。その状態で数年後に「家を売却しよう」となった際、売却額でローンを完済できず、<strong>手元から現金を持ち出さなければ売れない（オーバーローン）</strong>状態に陥るリスクがあります。</li>`;
     
     if (ageCategory >= 40) {
@@ -313,7 +355,6 @@ function runDiagnosis() {
         riskHTML += `<li><strong>住宅ローン以外の借入の重み：</strong> マイカーローンなどは住宅ローンに比べて金利が高く、金利上昇局面では家計へのダブルパンチになります。</li>`;
     }
 
-    // 対策の列挙
     adviceHTML += `<li><strong>繰上げ返済の「タイミングと現金の残し方」の黄金ルール：</strong> 手元現金をすべて繰上げ返済に充てるのは禁物です。教育費や修繕費に備えた「生活防衛資金」を確保した上で、余剰資金を「期間短縮型」の繰上げ返済に回し、元金を確実に削りましょう。</li>`;
     
     if (ageCategory <= 40 && elapsed <= 10) {
