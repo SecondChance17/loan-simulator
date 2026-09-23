@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン＆ライフプラン総合シミュレーター（金利変更ごとの履歴・内訳詳細版）</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -74,7 +74,7 @@
             border-left: 4px solid #ffc107;
             border-radius: 2px;
         }
-        input[type="number"], input[type="text"], select {
+        input[type="number"], select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -190,13 +190,13 @@
     <!-- ヘッダー（ロゴとタイトル） -->
     <div class="header">
         <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
-        <h1>住宅ローン＆ライフプラン総合シミュレーター（金利変更ごとの詳細内訳版）</h1>
+        <h1>住宅ローン＆ライフプラン総合シミュレーター</h1>
     </div>
 
     <form id="lifePlanForm">
         
         <!-- セクション1：基本情報・契約形態 -->
-        <div class="section-title">1. 基本情報・契約形態（数字のみ入力）</div>
+        <div class="section-title">1. 基本情報・契約形態（すべて数字のみ入力）</div>
         
         <div class="form-group">
             <label for="loanType">ローン契約の種類</label>
@@ -253,23 +253,23 @@
             <input type="number" id="estimatedBalance" placeholder="2200">
         </div>
 
-        <!-- セクション3：金利変更通知・見直しの履歴（最大7回分） -->
-        <div class="section-title">3. 金利変更・借り換えの履歴（最大7回分）</div>
-        <p class="note">※時期（例: 5年目、10年目など）と、変更後の金利（％）を半角数字で入力してください。</p>
+        <!-- セクション3：金利変更通知・見直しの履歴（最大7回分・すべて数字） -->
+        <div class="section-title">3. 金利変更・借り換えの履歴（最大7回分※すべて半角数字）</div>
+        <p class="note">※「見直し時期」は経過年数（例: 5年目なら「5」）、金利は「0.7」のように半角数字のみで入力してください（変更がない場合は空欄）。</p>
         
         <div class="sub-group">
-            <div class="rate-history-row"><label>1回目</label><input type="text" id="date1" placeholder="5年目" style="flex:1;"><input type="number" step="0.01" id="rate1" placeholder="0.7" style="flex:1;"></div>
-            <div class="rate-history-row"><label>2回目</label><input type="text" id="date2" placeholder="10年目" style="flex:1;"><input type="number" step="0.01" id="rate2" placeholder="1.0" style="flex:1;"></div>
-            <div class="rate-history-row"><label>3回目</label><input type="text" id="date3" placeholder="15年目" style="flex:1;"><input type="number" step="0.01" id="rate3" placeholder="" style="flex:1;"></div>
-            <div class="rate-history-row"><label>4回目</label><input type="text" id="date4" placeholder="20年目" style="flex:1;"><input type="number" step="0.01" id="rate4" placeholder="" style="flex:1;"></div>
-            <div class="rate-history-row"><label>5回目</label><input type="text" id="date5" placeholder="25年目" style="flex:1;"><input type="number" step="0.01" id="rate5" placeholder="" style="flex:1;"></div>
-            <div class="rate-history-row"><label>6回目</label><input type="text" id="date6" placeholder="30年目" style="flex:1;"><input type="number" step="0.01" id="rate6" placeholder="" style="flex:1;"></div>
-            <div class="rate-history-row"><label>7回目</label><input type="text" id="date7" placeholder="35年目" style="flex:1;"><input type="number" step="0.01" id="rate7" placeholder="" style="flex:1;"></div>
+            <div class="rate-history-row"><label>1回目</label><input type="number" id="date1" placeholder="時期(年数: 5)" style="flex:1;"><input type="number" step="0.01" id="rate1" placeholder="金利(%): 0.7" style="flex:1;"></div>
+            <div class="rate-history-row"><label>2回目</label><input type="number" id="date2" placeholder="時期(年数: 10)" style="flex:1;"><input type="number" step="0.01" id="rate2" placeholder="金利(%): 1.0" style="flex:1;"></div>
+            <div class="rate-history-row"><label>3回目</label><input type="number" id="date3" placeholder="時期(年数)" style="flex:1;"><input type="number" step="0.01" id="rate3" placeholder="金利(%)" style="flex:1;"></div>
+            <div class="rate-history-row"><label>4回目</label><input type="number" id="date4" placeholder="時期(年数)" style="flex:1;"><input type="number" step="0.01" id="rate4" placeholder="金利(%)" style="flex:1;"></div>
+            <div class="rate-history-row"><label>5回目</label><input type="number" id="date5" placeholder="時期(年数)" style="flex:1;"><input type="number" step="0.01" id="rate5" placeholder="金利(%)" style="flex:1;"></div>
+            <div class="rate-history-row"><label>6回目</label><input type="number" id="date6" placeholder="時期(年数)" style="flex:1;"><input type="number" step="0.01" id="rate6" placeholder="金利(%)" style="flex:1;"></div>
+            <div class="rate-history-row"><label>7回目</label><input type="number" id="date7" placeholder="時期(年数)" style="flex:1;"><input type="number" step="0.01" id="rate7" placeholder="金利(%)" style="flex:1;"></div>
         </div>
 
         <!-- セクション4：お子様の年齢（最大5名） -->
-        <div class="section-title">4. お子様の年齢（最大5名・数字のみ）</div>
-        <p class="note">※教育費のピークを予測します（いない場合は空欄）。</p>
+        <div class="section-title">4. お子様の年齢（最大5名・数字のみ※任意）</div>
+        <p class="note">※お子様がいない場合や入力しない場合は空欄で構いません。</p>
         
         <div class="sub-group">
             <div class="child-row"><label style="width:100px; padding-top:10px;">第1子</label><input type="number" id="child1" placeholder="12"></div>
@@ -334,30 +334,28 @@
         const estimatedBalance = document.getElementById('estimatedBalance').value;
 
         if(!currentAge || !buildingAge || !startAmount || !startPayment || !startRate || !currentMonthlyPayment || !estimatedBalance) {
-            alert('すべての必須項目に数字を入力してください。');
+            alert('基本情報および当初・現在の金額（年齢、築年数、借入額、返済額、金利、残高）をすべて入力してください。');
             return;
         }
 
-        // 履歴収集
         let historyList = [];
-        // 当初を追加
         historyList.push({
-            label: "当初契約時",
+            label: "当初契約時 (0年)",
             rate: Number(startRate),
             payment: Number(startPayment) * 10000,
             balance: Number(startAmount) * 10000
         });
 
         for(let i=1; i<=7; i++) {
-            let d = document.getElementById('date'+i).value;
-            let r = document.getElementById('rate'+i).value;
-            if(r !== "") {
-                let labelName = d ? d : (i + "回目見直し");
-                // 簡易的に残高や返済額の推移を仮置きまたは直近値からスライド
+            let dInput = document.getElementById('date'+i);
+            let rInput = document.getElementById('rate'+i);
+            if(dInput && rInput && rInput.value !== "" && rInput.value !== null) {
+                let yearNum = dInput.value.trim();
+                let labelName = yearNum !== "" ? (yearNum + "年目見直し") : (i + "回目見直し");
                 historyList.push({
                     label: labelName,
-                    rate: Number(r),
-                    payment: Number(currentMonthlyPayment) * 10000, // 簡易的に現行返済額を適用
+                    rate: Number(rInput.value),
+                    payment: Number(currentMonthlyPayment) * 10000,
                     balance: Number(estimatedBalance) * 10000
                 });
             }
@@ -365,8 +363,10 @@
 
         let kids = [];
         for(let i=1; i<=5; i++) {
-            let kAge = document.getElementById('child'+i).value;
-            if(kAge !== "") kids.push(Number(kAge));
+            let kInput = document.getElementById('child'+i);
+            if(kInput && kInput.value !== "") {
+                kids.push(Number(kInput.value));
+            }
         }
 
         const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked').length;
@@ -374,13 +374,12 @@
         const currentBalVal = Number(estimatedBalance) * 10000;
         const latestRate = historyList[historyList.length - 1].rate;
 
-        // --- 1. 履歴ごとの内訳テーブル生成 ---
         let tableHtml = `
             <table class="sim-table">
                 <tr><th>時期・タイミング</th><th>適用金利</th><th>月々の返済額</th><th>今月の利息分（概算）</th><th>今月の元本返済分（概算）</th></tr>
         `;
 
-        historyList.forEach((item, index) => {
+        historyList.forEach((item) => {
             let estInterest = Math.round(item.balance * (item.rate / 100) / 12);
             let estPrincipal = item.payment - estInterest;
             if(estPrincipal < 0) estPrincipal = 0;
@@ -398,7 +397,6 @@
         tableHtml += `</table>`;
         tableHtml += `<p style="font-size:12px; color:#555; margin-top:8px;"><em>※各時点の残高および金利をもとに、月々の返済額の中で「利息」と「元本」がそれぞれいくら占めているかを算出しています。</em></p>`;
 
-        // --- 2. 今時点の金利のみの支払い＆元本状態 ---
         let currentInterest = Math.round(currentBalVal * (latestRate / 100) / 12);
         let currentPrincipal = currentMVal - currentInterest;
         if(currentPrincipal < 0) currentPrincipal = 0;
@@ -412,7 +410,6 @@
             </ul>
         `;
 
-        // --- 3. 総合アドバイス（修繕・教育・車） ---
         let bAge = Number(buildingAge);
         let adviceHtml = `
             <strong>【住まいの修繕リスク（築 ${bAge}年）】</strong><br>
@@ -431,11 +428,10 @@
         adviceHtml += `<br><strong>【車の維持・車検】</strong><br>
         車検や数年ごとの買い替え費用は生活に直結するため、ローン口座とは別に「車用・修繕用口座」を設けて管理するのが理想的です。`;
 
-        // --- 4. 総合判定 ---
         let checkSummaryHtml = `チェック項目（5項目中）: <strong>${checkedCount}項目</strong>クリア。<br>`;
         if (checkedCount === 5) {
             checkSummaryHtml += `✨ 素晴らしい管理状態です！金利変更ごとの内訳変化や将来のリスクを完璧に把握されています。`;
-        } else if (checkCount >= 3) {
+        } else if (checkedCount >= 3) {
             checkSummaryHtml += `👍 重要ポイントを押さえていますが、金利変動に伴う利息負担の増加や修繕・教育費の重なりを再確認しておくと安心です。`;
         } else {
             checkSummaryHtml += `⚠️ 返済内訳の変化や将来の複合的支出による家計圧迫リスクがあります。一度詳細な家計見直しをご検討ください。`;
