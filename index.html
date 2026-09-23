@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン変動権利チェックシート＆ローン計算</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: #fff;
             padding: 30px;
@@ -33,7 +33,7 @@
             margin-right: 15px;
         }
         h1 {
-            font-size: 22px;
+            font-size: 20px;
             color: #0056b3;
             margin: 0;
         }
@@ -42,17 +42,28 @@
             color: #2c3e50;
             border-left: 4px solid #0056b3;
             padding-left: 10px;
-            margin-top: 30px;
+            margin-top: 35px;
             margin-bottom: 15px;
+            background: #f8f9fa;
+            padding-top: 5px;
+            padding-bottom: 5px;
         }
         .form-group {
             margin-bottom: 20px;
+        }
+        .sub-group {
+            background: #fdfdfd;
+            border: 1px dashed #ccc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
         }
         label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
             color: #444;
+            font-size: 14px;
         }
         .note {
             font-size: 13px;
@@ -63,16 +74,32 @@
             border-left: 4px solid #ffc107;
             border-radius: 2px;
         }
-        input[type="number"], select {
+        input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 15px;
         }
         input::placeholder {
             color: #aaa;
+        }
+        .rate-history-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .rate-history-row label {
+            font-weight: normal;
+            font-size: 12px;
+            margin-bottom: 0;
+        }
+        .child-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
         }
         .checkbox-group {
             background: #fafafa;
@@ -88,6 +115,7 @@
             margin-bottom: 12px;
             cursor: pointer;
             line-height: 1.5;
+            font-size: 14px;
         }
         .checkbox-label input[type="checkbox"] {
             margin-top: 3px;
@@ -100,13 +128,13 @@
             background-color: #0056b3;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 30px;
             transition: background 0.3s;
         }
         .btn:hover {
@@ -114,15 +142,26 @@
         }
         .result-box {
             margin-top: 30px;
-            padding: 20px;
+            padding: 25px;
             background: #eef9ff;
             border: 1px solid #b8daff;
-            border-radius: 4px;
+            border-radius: 6px;
             display: none;
         }
         .result-box h3 {
             margin-top: 0;
             color: #004085;
+        }
+        .result-section {
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #0056b3;
+        }
+        .result-section h4 {
+            margin-top: 0;
+            color: #2c3e50;
         }
     </style>
 </head>
@@ -131,128 +170,295 @@
 <div class="container">
     <!-- ヘッダー（ロゴとタイトル） -->
     <div class="header">
-        <img src="logo.jpg" alt="ロゴ">
-        <h1>住宅ローン変動権利チェックシート＆ローン計算</h1>
+        <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
+        <h1>住宅ローン＆ライフプラン総合シミュレーター（家計・教育・車・修繕トータル診断）</h1>
     </div>
 
-    <form id="loanForm">
-        <!-- セクション1：ローン情報入力 -->
-        <div class="section-title">1. 現在のローン詳細情報入力</div>
+    <form id="lifePlanForm">
+        
+        <!-- セクション1：基本情報・契約形態 -->
+        <div class="section-title">1. 基本情報・ローン契約形態</div>
         
         <div class="form-group">
-            <label for="currentBalance">現在のローン残高（円）</label>
-            <input type="number" id="currentBalance" placeholder="例：現在のローン残高を入力してください（例：30000000）">
-        </div>
-
-        <div class="form-group">
-            <label for="remainingYears">残り返済期間（年）</label>
-            <input type="number" id="remainingYears" placeholder="例：残り年数を入力してください（例：25）">
-        </div>
-
-        <div class="form-group">
-            <label for="currentRate">現在の適用金利（％）</label>
-            <input type="number" step="0.01" id="currentRate" placeholder="例：現在の金利を入力してください（例：0.5）">
-        </div>
-
-        <div class="form-group">
-            <label for="currentAge">現在の年齢（歳）</label>
-            <input type="number" id="currentAge" placeholder="例：現在の年齢を入力してください（例：40）">
-        </div>
-
-        <div class="form-group">
-            <label for="bonusRatio">ボーナス払い割合</label>
-            <select id="bonusRatio">
-                <option value="" disabled selected>選択してください</option>
-                <option value="0">ボーナス払いなし（毎月平準払い）</option>
-                <option value="20">ボーナス払い 約2割</option>
-                <option value="30">ボーナス払い 約3割</option>
-                <option value="50">ボーナス払い 約5割</option>
+            <label for="loanType">ローン契約の種類</label>
+            <select id="loanType">
+                <option value="single">単独ローン</option>
+                <option value="pair">ペアローン（夫婦それぞれで借入）</option>
             </select>
         </div>
 
-        <!-- セクション2：変動金利・リスクに関するチェックシート -->
-        <div class="section-title">2. 変動金利の理解度・リスク許容度チェック</div>
+        <div class="form-group">
+            <label for="currentAge">世帯主の現在の年齢（歳）</label>
+            <input type="number" id="currentAge" placeholder="例：45">
+        </div>
+
+        <div class="form-group">
+            <label for="buildingAge">現在の建物の築年数（年）</label>
+            <input type="number" id="buildingAge" placeholder="例：15（築15年なら外壁・屋根・水回りの大規模修繕期に注意）">
+        </div>
+
+        <!-- セクション2：当初契約時の詳細 -->
+        <div class="section-title">2. 当初契約時の詳細情報</div>
+        
+        <div class="form-group">
+            <label for="startAmount">当初契約時 借入金額（円）</label>
+            <input type="number" id="startAmount" placeholder="例：35000000">
+        </div>
+
+        <div class="form-group">
+            <label for="startRate">当初の金利（％）</label>
+            <input type="number" step="0.01" id="startRate" placeholder="例：1.2（20年前なら1〜2%台、近年の低金利なら0.5%など）">
+        </div>
+
+        <div class="form-group">
+            <label for="rateType">当時の金利タイプ</label>
+            <select id="rateType">
+                <option value="variable">変動金利</option>
+                <option value="fixed">固定金利（期間選択または全期間固定）</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="currentMonthlyPayment">現在の毎月の返済額（円）</label>
+            <input type="number" id="currentMonthlyPayment" placeholder="例：95000（現在の実際の月々の支払い）">
+        </div>
+
+        <!-- セクション3：銀行からの金利変更通知履歴（最大7回分：5年ごと想定） -->
+        <div class="section-title">3. 金利変更通知の履歴（最大7回分・5年ごとの見直しなど）</div>
+        <p class="note">※銀行から通知された「変更後の適用金利」と「適用開始日付（または時期）」を古い順または分かる範囲でご入力ください。</p>
+        
+        <div class="sub-group">
+            <!-- 1回目 -->
+            <div class="rate-history-row">
+                <label>① 1回目見直し</label>
+                <input type="text" id="date1" placeholder="時期/年（例：5年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate1" placeholder="変更後金利(%)" style="flex:1;">
+            </div>
+            <!-- 2回目 -->
+            <div class="rate-history-row">
+                <label>② 2回目見直し</label>
+                <input type="text" id="date2" placeholder="時期/年（例：10年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate2" placeholder="変更後金利(%)" style="flex:1;">
+            </div>
+            <!-- 3回目 -->
+            <div class="rate-history-row">
+                <label>③ 3回目見直し</label>
+                <input type="text" id="date3" placeholder="時期/年（例：15年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate3" placeholder="変更後金利(%)" style="flex:1;">
+            </div>
+            <!-- 4回目 -->
+            <div class="rate-history-row">
+                <label>④ 4回目見直し</label>
+                <input type="text" id="date4" placeholder="時期/年（例：20年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate4" placeholder="変更後金利(%)" style="flex:1;">
+            </div>
+            <!-- 5回目 -->
+            <div class="rate-history-row">
+                <label>⑤ 5回目見直し</label>
+                <input type="text" id="date5" placeholder="時期/年（例：25年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate5" placeholder="変更後金利(%)" style="flex:1;">
+            </div>
+            <!-- 6回目 -->
+            <div class="rate-history-row">
+                <label>⑥ 6回目見直し</label>
+                <input type="text" id="date6" placeholder="時期/年（例：30年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate6" placeholder="変更後金利(%)" style="flex:1;">
+            </div>
+            <!-- 7回目 -->
+            <div class="rate-history-row">
+                <label>⑦ 7回目見直し</label>
+                <input type="text" id="date7" placeholder="時期/年（例：35年目）" style="flex:1;">
+                <input type="number" step="0.01" id="rate7" placeholder="変更後金利(%)" style="flex:1;">
+            </div>
+        </div>
+
+        <!-- セクション4：お子様の年齢（最大5名） -->
+        <div class="section-title">4. お子様の年齢（最大5名まで）</div>
+        <p class="note">※教育費のピーク（高校・大学受験）を予測するためにご入力ください（いない場合は空欄）。</p>
+        
+        <div class="sub-group">
+            <div class="child-row">
+                <label style="width:100px; padding-top:10px;">第1子 年齢</label>
+                <input type="number" id="child1" placeholder="例：12（中1）">
+            </div>
+            <div class="child-row">
+                <label style="width:100px; padding-top:10px;">第2子 年齢</label>
+                <input type="number" id="child2" placeholder="例：9（小3）">
+            </div>
+            <div class="child-row">
+                <label style="width:100px; padding-top:10px;">第3子 年齢</label>
+                <input type="number" id="child3" placeholder="空欄可">
+            </div>
+            <div class="child-row">
+                <label style="width:100px; padding-top:10px;">第4子 年齢</label>
+                <input type="number" id="child4" placeholder="空欄可">
+            </div>
+            <div class="child-row">
+                <label style="width:100px; padding-top:10px;">第5子 年齢</label>
+                <input type="number" id="child5" placeholder="空欄可">
+            </div>
+        </div>
+
+        <!-- セクション5：変動金利の理解・リスク許容度チェック -->
+        <div class="section-title">5. 変動金利・ライフプランリスク チェックシート</div>
         
         <div class="checkbox-group">
-            <div class="note">※下の「□」をクリックして、ご自身の状況に当てはまる項目すべてにチェックしてください。</div>
+            <div class="note">※下の「□」をクリックして、当てはまる項目にチェックしてください。</div>
             
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                <span>金利が上昇した際、毎月の返済額が増えるリスク（金利上昇リスク）について十分に理解している。</span>
+                金利が上昇した際、毎月の返済額や総返済額が当初想定よりどれだけ増えているか（または今後増えるリスク）を把握している。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                <span>変動金利には「5年ルール（5年間は返済額が変わらない）」や「125%ルール（見直し時の値上げは最大1.25倍まで）」があることを知っている。</span>
+                車検や数年ごとのマイカー買い替え費用、自動車保険などの維持費を家計予算に組み込んでいる。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                <span>もし将来的に金利が1%〜2%程度上昇したとしても、家計の貯蓄や収入から十分に耐えられる余裕がある。</span>
+                築年数の経過に伴う「外壁・屋根塗装」「水回り（キッチン・浴室等）の交換」といった大規模修繕費用の積立をしている。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                <span>金利上昇の兆候が見えた際、固定金利への借り換えや繰上返済を行うための資金計画・心積もりがある。</span>
+                子供の進学（特に高校・大学の入学金や授業料が重なる時期）の教育費ピークに備えた貯蓄ができている。
             </label>
             <label class="checkbox-label">
                 <input type="checkbox" name="checkItem">
-                <span>住宅ローン控除（減税）の期間や、自身のライフプラン（教育費のピークなど）を把握した上でローンを組んでいる。</span>
+                ペアローンの場合、万が一の収入減や退職・育休時における返済シミュレーションを行っている。
             </label>
         </div>
 
-        <button type="button" class="btn" onclick="calculateLoan()">診断・計算を実行する</button>
+        <button type="button" class="btn" onclick="runComprehensiveSimulation()">総合ライフプラン＆ローン診断を実行</button>
     </form>
 
     <!-- 結果表示エリア -->
     <div id="resultBox" class="result-box">
-        <h3>診断結果</h3>
-        <p id="resultText"></p>
+        <h3>総合診断結果レポート</h3>
+        
+        <div class="result-section">
+            <h4>1. ローン負担・金利変更の分析</h4>
+            <p id="resLoanAnalysis"></p>
+        </div>
+
+        <div class="result-section">
+            <h4>2. 住まいの維持（築年数・修繕リスク）</h4>
+            <p id="resHousingRisk"></p>
+        </div>
+
+        <div class="result-section">
+            <h4>3. 教育費・車の維持（ライフプラン総合アドバイス）</h4>
+            <p id="resLifePlanAdvice"></p>
+        </div>
+
+        <div class="result-section">
+            <h4>4. チェックシート総合判定</h4>
+            <p id="resCheckSummary"></p>
+        </div>
     </div>
 </div>
 
 <script>
-    function calculateLoan() {
-        const balance = document.getElementById('currentBalance').value;
-        const years = document.getElementById('remainingYears').value;
-        const rate = document.getElementById('currentRate').value;
-        const age = document.getElementById('currentAge').value;
-        const bonus = document.getElementById('bonusRatio').value;
-        
-        const resultBox = document.getElementById('resultBox');
-        const resultText = document.getElementById('resultText');
+    function runComprehensiveSimulation() {
+        const loanType = document.getElementById('loanType').value;
+        const currentAge = document.getElementById('currentAge').value;
+        const buildingAge = document.getElementById('buildingAge').value;
+        const startAmount = document.getElementById('startAmount').value;
+        const startRate = document.getElementById('startRate').value;
+        const rateType = document.getElementById('rateType').value;
+        const currentMonthlyPayment = document.getElementById('currentMonthlyPayment').value;
 
-        if(!balance || !years || !rate || !age || bonus === "") {
-            alert('すべての項目（ローン残高、残り期間、金利、年齢、ボーナス払い）を入力・選択してください。');
+        if(!currentAge || !buildingAge || !startAmount || !startRate || !currentMonthlyPayment) {
+            alert('基本情報（世帯主年齢、築年数、当初借入額、当初金利、現在の月額返済）をすべて入力してください。');
             return;
         }
 
-        // 完済時年齢の計算
-        const finishAge = Number(age) + Number(years);
+        // 金利変更履歴の収集
+        let historyCount = 0;
+        let historyText = "";
+        for(let i=1; i<=7; i++) {
+            let d = document.getElementById('date'+i).value;
+            let r = document.getElementById('rate'+i).value;
+            if(r !== "") {
+                historyCount++;
+                historyText += `・${d ? d : i+'回目見直し'}: 金利 <strong>${r}%</strong><br>`;
+            }
+        }
 
-        // チェックされた個数をカウント
-        const checkboxes = document.querySelectorAll('input[name="checkItem"]:checked');
-        const checkCount = checkboxes.length;
+        // 子供年齢の収集
+        let kids = [];
+        for(let i=1; i<=5; i++) {
+            let kAge = document.getElementById('child'+i).value;
+            if(kAge !== "") {
+                kids.push(Number(kAge));
+            }
+        }
 
-        // 簡単な簡易判定メッセージ
-        let advice = "";
-        if (checkCount >= 4) {
-            advice = "リスクに対する備えやご理解がしっかりできています。引き続き定期的な見直しをおすすめします。";
-        } else if (checkCount >= 2) {
-            advice = "おおむね問題ありませんが、金利上昇時の家計シミュレーションを一度詳しく行っておくとより安心です。";
+        // チェック数
+        const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked').length;
+
+        // --- 1. ローン・金利分析の生成 ---
+        let loanAnalysisHtml = `
+            ・<strong>契約形態:</strong> ${loanType === 'pair' ? 'ペアローン（夫婦それぞれの収入合算・連帯債務等によるリスク分散と注意が必要）' : '単独ローン'}<br>
+            ・<strong>当初条件:</strong> 借入額 <strong>${Number(startAmount).toLocaleString()}円</strong> / 当初金利 <strong>${startRate}\%</strong> (${rateType === 'variable' ? '変動金利' : '固定金利'})<br>
+            ・<strong>現在の月額返済:</strong> <strong>${Number(currentMonthlyPayment).toLocaleString()}円 / 月</strong><br>
+        `;
+        if(historyCount > 0) {
+            loanAnalysisHtml += `<br><strong>【ご入力いただいた金利変更履歴（計 ${historyCount}回）】</strong><br>` + historyText;
+            loanAnalysisHtml += `<p style="font-size:13px; color:#c0392b; margin-top:5px;">※20年前や低金利期に組まれた方で金利が上昇局面に入ると、未払利息や「5年ルール・125%ルール」の適用による元金スライドの仕組みに注意が必要です。</p>`;
         } else {
-            advice = "変動金利の仕組みやリスクについて、一度しっかりと見直しや専門家への相談を検討されることをおすすめします。";
+            loanAnalysisHtml += `<br><em>※金利変更履歴の入力はありませんが、今後の金利上昇時には毎月の返済内訳（元本と利息のバランス）の変化に注意してください。</em>`;
+        }
+
+        // --- 2. 住まいの維持（築年数リスク） ---
+        let bAge = Number(buildingAge);
+        let housingRiskHtml = `現在の築年数は <strong>${bAge}年</strong> です。<br>`;
+        if (bAge >= 25) {
+            housingRiskHtml += `⚠️ **大規模改修・建て替え検討期:** 給排水管の全面更新、外壁・屋根の大規模改修に加え、設備の寿命（キッチン・浴室・給湯器など2〜3回目の交換）や、将来的な耐震改修・建て替えの資金計画を本格的に考える時期です。`;
+        } else if (bAge >= 15) {
+            housingRiskHtml += `⚠️ **外壁・屋根・水回りの正念場:** 一般的に築10〜15年で外壁塗装や屋根のメンテナンス、ベランダ防水、給湯器や食洗機などの住宅設備交換が重なり、まとまった支出（100万〜200万円以上）が発生しやすいタイミングです。`;
+        } else if (bAge >= 10) {
+            housingRiskHtml += `💡 **初期メンテナンス期:** 最初の外壁・コーキング点検や、シロアリ予防施工、各種設備の保証切れに伴うメンテナンス費用を積立・準備しておくことが推奨されます。`;
+        } else {
+            housingRiskHtml += `✅ 比較的新しい状態ですが、将来の修繕費（10年ごとのメンテナンス）に向けて月々1〜2万円程度の積立を始めておくと安心です。`;
+        }
+
+        // --- 3. 教育費・車の維持アドバイス ---
+        let lifePlanHtml = ``;
+        if (kids.length > 0) {
+            lifePlanHtml += `<strong>【お子様の教育費について】</strong><br>
+            現在、 ${kids.length}名のお子様（年齢: ${kids.join('歳, ')}歳）がいらっしゃいます。<br>`;
+            
+            let peakCount = kids.filter(age => age >= 12 && age <= 22).length;
+            if (peakCount > 0) {
+                lifePlanHtml += `🚨 <strong>教育費ピーク重なり注意:</strong> 現在または数年以内に、中学・高校・大学の進学が重なる「教育費のピーク」を迎えます。住宅ローンの金利上昇や車検・買い替えが同時に来ると家計を圧迫するため、事前のキャッシュフロー管理が極めて重要です。<br>`;
+            } else {
+                lifePlanHtml += `💡 お子様が小さいうち（または独立前）に、教育費の貯蓄スピードを最大化し、ローン残高の繰上返済用資金と切り分けて管理することをおすすめします。<br>`;
+            }
+        } else {
+            lifePlanHtml += `お子様の年齢が未入力ですが、ライフプランにおいて教育費は大きな割合を占めます。<br>`;
+        }
+
+        lifePlanHtml += `<br><strong>【クルマの維持・車検・買い替えについて】</strong><br>
+        地方や郊外では車が生活必需品であり、車検費用（数万〜十数万円）、2〜7年ごとの車両買い替え（150万〜300万円）、自動車税・任意保険が定期的に発生します。ローンの見直しや修繕費と合わせ、<strong>「車用口座」「修繕用口座」「教育用口座」を別々に分けて積立する</strong>のが理想的です。`;
+
+        // --- 4. チェックシート総合判定 ---
+        let checkSummaryHtml = `チェック項目（5項目中）: <strong>${checkedCount}項目</strong>クリア。<br>`;
+        if (checkedCount === 5) {
+            checkSummaryHtml += `✨ 素晴らしい備えです！金利変更、教育費、車、修繕、契約形態のすべてにおいてリスク管理意識が高く、堅実なライフプランが構築できています。`;
+        } else if (checkedCount >= 3) {
+            checkSummaryHtml += `👍 おおむねポイントを押さえていますが、一部（修繕費や車維持費、金利変動のシミュレーション等）で不確定な部分があります。数年単位のキャッシュフロー表を一度書き出してみることをお勧めします。`;
+        } else {
+            checkSummaryHtml += `⚠️ 金利上昇リスク、築年数による修繕、教育費の重なり、車の維持費など、将来の複合的な支出に対して家計が圧迫されるリスクがあります。専門家（FPなど）への相談や、固定金利への一部変更・借換、家計の固定費見直しをご検討ください。`;
         }
 
         // 結果を表示
+        const resultBox = document.getElementById('resultBox');
+        document.getElementById('resLoanAnalysis').innerHTML = loanAnalysisHtml;
+        document.getElementById('resHousingRisk').innerHTML = housingRiskHtml;
+        document.getElementById('resLifePlanAdvice').innerHTML = lifePlanHtml;
+        document.getElementById('resCheckSummary').innerHTML = checkSummaryHtml;
+        
         resultBox.style.display = 'block';
-        resultText.innerHTML = `
-            ご入力ありがとうございます。<br><br>
-            <strong>【ご入力情報】</strong><br>
-            ・現在残高: <strong>${Number(balance).toLocaleString()}円</strong>（残り期間: ${years}年）<br>
-            ・適用金利: <strong>${rate}%</strong><br>
-            ・現在の年齢: <strong>${age}歳</strong>（完済時予想年齢: <strong>${finishAge}歳</strong>）<br>
-            <br>
-            <strong>【チェックシート結果】</strong> 5項目中 <strong>${checkCount}項目</strong> にチェックが入りました。<br><br>
-            <strong>【アドバイス】</strong><br>${advice}
-        `;
+        resultBox.scrollIntoView({ behavior: 'smooth' });
     }
 </script>
 
