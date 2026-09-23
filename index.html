@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.05</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.06</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -208,6 +208,14 @@
             border-radius: 4px;
             margin-top: 10px;
         }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
         .strategy-box {
             background: #fdfefe;
             border: 1px solid #bdc3c7;
@@ -222,19 +230,28 @@
 <div class="container">
     <div class="header">
         <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
-        <h1>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.05</h1>
+        <h1>住宅ローン＆ライフプラン総合シミュレーター Ver.2026.06</h1>
     </div>
 
     <div class="disclaimer-box">
         <strong>【免責事項・前提条件】</strong><br>
-        本シミュレーターは概算による家計の傾向把握および意思決定支援を目的としたものであり、正式な金融機関の返済予定表や個別契約の代替となるものではありません。
+        本シミュレーターは、既存ローンの見直し（借り換え・繰上返済・ボーナス変更）や、新規購入検討時の逆算シミュレーション等、幅広い目的に対応した概算ツールです。
     </div>
 
     <form id="lifePlanForm">
         
         <!-- セクション1：基本情報・契約形態 -->
-        <div class="section-title">1. 基本情報・契約形態</div>
+        <div class="section-title">1. 基本情報・契約形態・利用目的</div>
         
+        <div class="form-group">
+            <label for="simulationPurpose">利用目的・ご自身の状況</label>
+            <select id="simulationPurpose">
+                <option value="refinance_variable">現在「変動金利」で、借り換えや繰上返済に悩んでいる</option>
+                <option value="secure_fixed">現在「固定金利」で、将来の安心感を確認したい</option>
+                <option value="buy_planning">これから家を購入予定（逆算で予算や返済額を検討したい）</option>
+            </select>
+        </div>
+
         <div class="form-group">
             <label for="loanType">ローン契約の種類</label>
             <select id="loanType" onchange="togglePairLoan()">
@@ -245,12 +262,12 @@
 
         <div class="form-group">
             <label for="currentAge">世帯主の現在の年齢（歳）</label>
-            <input type="number" id="currentAge" placeholder="50" min="18" max="100">
+            <input type="number" id="currentAge" placeholder="42" min="18" max="100">
         </div>
 
         <div class="form-group" id="spouseAgeGroup" style="display:none;">
             <label for="spouseAge">配偶者（共同債務者）の現在の年齢（歳）</label>
-            <input type="number" id="spouseAge" placeholder="48" min="18" max="100">
+            <input type="number" id="spouseAge" placeholder="40" min="18" max="100">
         </div>
 
         <div class="form-group">
@@ -266,15 +283,7 @@
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="bonusPaymentType">ボーナス払い併用の有無</label>
-            <select id="bonusPaymentType" onchange="toggleBonusInput()">
-                <option value="none">ボーナス払いなし（毎月均等）</option>
-                <option value="has_bonus" selected>ボーナス払いあり（夏・冬に負担あり）</option>
-            </select>
-        </div>
-
-        <!-- セクション2：当初契約時＆現在の詳細 -->
+        <!-- セクション2：当初契約時＆現在の詳細（ボーナス設定分離） -->
         <div class="section-title">2. 当初契約時 ＆ 現在の状況（※金額はすべて「万円」）</div>
         
         <div class="form-group">
@@ -283,8 +292,16 @@
         </div>
 
         <div class="form-group">
-            <label for="startPayment">当初の毎月の返済額（万円）</label>
-            <input type="number" step="0.1" id="startPayment" placeholder="8.0" min="0.1">
+            <label for="startPaymentType">【当初】ボーナス払い設定</label>
+            <select id="startPaymentType" onchange="toggleStartBonusInput()">
+                <option value="none">当初はボーナス払いなし（毎月均等）</option>
+                <option value="has_bonus" selected>当初はボーナス払いあり（夏・冬）</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="startMonthlyPayment">当初の毎月の返済額（万円）</label>
+            <input type="number" step="0.1" id="startMonthlyPayment" placeholder="8.0" min="0.1">
         </div>
 
         <div class="form-group" id="startBonusGroup">
@@ -298,12 +315,22 @@
         </div>
 
         <div class="form-group">
-            <label for="loanHistoryType">金利タイプの経緯・検討状況</label>
+            <label for="loanHistoryType">金利タイプの経緯</label>
             <select id="loanHistoryType">
-                <option value="variable_always">当初から変動金利（固定への切替も検討中）</option>
+                <option value="variable_always">当初から変動金利</option>
                 <option value="fixed_to_variable">当初は固定だが途中で変動へ切替/借換</option>
                 <option value="fixed_to_fixed">固定から固定へ借り換え</option>
                 <option value="fixed_all">全期間固定金利</option>
+            </select>
+        </div>
+
+        <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
+
+        <div class="form-group">
+            <label for="currentPaymentType">【現在】ボーナス払い設定（※途中でなくしたり追加した場合はここで変更）</label>
+            <select id="currentPaymentType" onchange="toggleCurrentBonusInput()">
+                <option value="none">現在はボーナス払いなし（毎月均等に一本化）</option>
+                <option value="has_bonus" selected>現在はボーナス払いあり（継続中または追加）</option>
             </select>
         </div>
 
@@ -319,19 +346,18 @@
 
         <div class="form-group">
             <label for="estimatedBalance">現在の実際のローン残高（万円）</label>
-            <input type="number" id="estimatedBalance" placeholder="4400" min="0">
+            <input type="number" id="estimatedBalance" placeholder="3200" min="0">
         </div>
 
         <div class="form-group">
             <label for="remainingYears">残り返済期間（年）</label>
-            <input type="number" id="remainingYears" placeholder="33" min="1" max="50">
+            <input type="number" id="remainingYears" placeholder="25" min="1" max="50">
         </div>
 
         <!-- セクション3：金利変更履歴 -->
         <div class="section-title">3. 金利変更・見直し履歴（銀行からの通知書内容を反映・最大10回分）</div>
         <div class="note">
-            💡 <strong>【銀行から届く「金利変更通知書」や「見直し通知」について】</strong><br>
-            金利変更は必ずしも5年刻みとは限りません。通知書に記載されている**「見直し時点（何年目か）」と「その時の適用金利（％）」**を古い順に下記に入力してください。
+            💡 銀行からの「金利変更通知書」等に記載されている**「見直し時点（何年目か）」と「その時の適用金利（％）」**を古い順に入力してください。（全期間固定や変動でまだ通知がない場合は空欄でOKです）
         </div>
         
         <div class="sub-group">
@@ -360,12 +386,12 @@
         <!-- セクション5：回答者の意思確認チェックシート -->
         <div class="section-title">5. 回答者の意思確認・出口戦略チェックシート</div>
         <div class="checkbox-group">
-            <div class="note">※ご自身の方向性や考えに当てはまる項目にチェックを入れてください。（複数選択可）</div>
-            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="maintain"><strong>【維持を希望】</strong> 金利が上がっても、固定金利への切替や取引銀行への条件変更交渉を活用してこの家に住み続けたい。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="sell_limit"><strong>【売却を検討】</strong> 返済額が当初の予算を超えた場合や生活が圧迫された場合は、早めに家を売却することを検討している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">金利上昇局面において「固定金利への切り替え」や「繰上返済」のタイミングを常に模索している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">売却時にローン残高が売却額を上回る（オーバーローン）リスクや、追い金の可能性を理解している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">ボーナス払いの変動・減額リスクや、家を長く維持するための修繕費・教育費に備えている。</label>
+            <div class="note">※ご自身の方向性や考えに当てはまる項目にチェックを入れてください。（複数選択可。未選択でもシミュレーション可能です）</div>
+            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="maintain"><strong>【維持を希望】</strong> 金利上昇リスクに備えつつ、固定切替や繰上返済を活用してこの家に住み続けたい。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="sell_limit"><strong>【売却を検討】</strong> 返済圧迫やライフスタイル変更時は、早めの売却（住替え・リセット）も選択肢に入れている。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">固定金利中であっても、毎月の返済額をさらに抑えるための「希望月額にするための必要繰上返済額」を知りたい。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">ボーナス払いの変更（有無の切り替え）や、将来の金利見直し時の125%ルール・未払い利息リスクを正しく理解したい。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">教育費のピークや定年退職時期とローン完済時期のキャッシュフローにゆとりを持たせたい。</label>
         </div>
 
         <button type="button" class="btn" onclick="runSimulation()">シミュレーションを実行する</button>
@@ -373,25 +399,25 @@
 
     <!-- 結果表示エリア -->
     <div id="resultBox" class="result-box">
-        <h3>シミュレーション結果レポート ＆ 完全網羅型アドバイス</h3>
+        <h3>シミュレーション結果レポート ＆ パーソナライズド・アドバイス</h3>
         
         <div class="result-section">
-            <h4>1. 金利変更通知履歴ごとの利息推移（償却検証）</h4>
+            <h4>1. 金利変更履歴ごとの利息推移（償却検証）</h4>
             <div id="resHistoryTable"></div>
         </div>
 
         <div class="result-section">
-            <h4>2. 【返済負担の検証 ＆ 5年後125％ルール時の金額 ＆ 必要繰上返済額】</h4>
+            <h4>2. 【返済負担・125％ルール予測 ＆ 希望月額にするための必要繰上返済額】</h4>
             <div id="res125Comparison"></div>
         </div>
 
         <div class="result-section">
-            <h4>3. ペアローン・年齢・ボーナス払いリスクの評価</h4>
+            <h4>3. ペアローン・年齢・ボーナス払い変更履歴の評価</h4>
             <div id="resPairHealthRisk"></div>
         </div>
 
         <div class="result-section">
-            <h4>4. 【意思に沿ったアドバイス】取引銀行への相談・借り換えの現実的ハードル vs 売却の選択</h4>
+            <h4>4. 【属性・意思に応じた最適アドバイス】（リスク評価メッセージ）</h4>
             <div id="resLifePlanAdvice"></div>
         </div>
 
@@ -408,25 +434,29 @@
         document.getElementById('spouseAgeGroup').style.display = (loanType === 'pair') ? 'block' : 'none';
     }
 
-    function toggleBonusInput() {
-        const bonusType = document.getElementById('bonusPaymentType').value;
-        const displayVal = (bonusType === 'has_bonus') ? 'block' : 'none';
-        document.getElementById('startBonusGroup').style.display = displayVal;
-        document.getElementById('currentBonusGroup').style.display = displayVal;
+    function toggleStartBonusInput() {
+        const bonusType = document.getElementById('startPaymentType').value;
+        document.getElementById('startBonusGroup').style.display = (bonusType === 'has_bonus') ? 'block' : 'none';
+    }
+
+    function toggleCurrentBonusInput() {
+        const bonusType = document.getElementById('currentPaymentType').value;
+        document.getElementById('currentBonusGroup').style.display = (bonusType === 'has_bonus') ? 'block' : 'none';
     }
 
     function runSimulation() {
+        const simulationPurpose = document.getElementById('simulationPurpose').value;
         const loanType = document.getElementById('loanType').value;
         const currentAgeStr = document.getElementById('currentAge').value;
         const buildingAgeStr = document.getElementById('buildingAge').value;
         const startAmountStr = document.getElementById('startAmount').value;
-        const startPaymentStr = document.getElementById('startPayment').value;
+        const startMonthlyPaymentStr = document.getElementById('startMonthlyPayment').value;
         const startRateStr = document.getElementById('startRate').value;
         const currentMonthlyPaymentStr = document.getElementById('currentMonthlyPayment').value;
         const estimatedBalanceStr = document.getElementById('estimatedBalance').value;
         const remainingYearsStr = document.getElementById('remainingYears').value;
 
-        if (currentAgeStr === "" || buildingAgeStr === "" || startAmountStr === "" || startPaymentStr === "" || startRateStr === "" || currentMonthlyPaymentStr === "" || estimatedBalanceStr === "" || remainingYearsStr === "") {
+        if (currentAgeStr === "" || buildingAgeStr === "" || startAmountStr === "" || startMonthlyPaymentStr === "" || startRateStr === "" || currentMonthlyPaymentStr === "" || estimatedBalanceStr === "" || remainingYearsStr === "") {
             alert('必須項目に未入力の箇所があります。すべて入力してください。');
             return;
         }
@@ -435,27 +465,27 @@
         const spouseAge = document.getElementById('spouseAge').value !== "" ? Number(document.getElementById('spouseAge').value) : 0;
         const buildingAge = Number(buildingAgeStr);
         const repaymentMethod = document.getElementById('repaymentMethod').value;
-        const bonusPaymentType = document.getElementById('bonusPaymentType').value;
+
+        const startPaymentType = document.getElementById('startPaymentType').value;
+        const currentPaymentType = document.getElementById('currentPaymentType').value;
 
         let startBonus = 0;
-        let currentBonusPayment = 0;
-        if (bonusPaymentType === 'has_bonus') {
+        if (startPaymentType === 'has_bonus') {
             startBonus = document.getElementById('startBonus').value !== "" ? Number(document.getElementById('startBonus').value) * 10000 : 0;
+        }
+
+        let currentBonusPayment = 0;
+        if (currentPaymentType === 'has_bonus') {
             currentBonusPayment = document.getElementById('currentBonusPayment').value !== "" ? Number(document.getElementById('currentBonusPayment').value) * 10000 : 0;
         }
 
         const startAmount = Number(startAmountStr) * 10000;
-        const startPayment = Number(startPaymentStr) * 10000;
+        const startMonthlyPayment = Number(startMonthlyPaymentStr) * 10000;
         const startRate = Number(startRateStr);
         const loanHistoryType = document.getElementById('loanHistoryType').value;
         const currentMonthlyPayment = Number(currentMonthlyPaymentStr) * 10000;
         const estimatedBalance = Number(estimatedBalanceStr) * 10000;
         const remainingYears = Number(remainingYearsStr);
-
-        if (startAmount < 0 || startPayment < 0 || startRate < 0 || currentMonthlyPayment < 0 || estimatedBalance < 0 || remainingYears < 0) {
-            alert('金額や年数にマイナスの値は入力できません。');
-            return;
-        }
 
         if (loanType === 'pair' && document.getElementById('spouseAge').value === "") {
             alert('ペアローンを選択された場合は、配偶者の現在の年齢を入力してください。');
@@ -476,7 +506,7 @@
 
         let tableHtml = `<table class="sim-table"><tr><th>タイミング</th><th>通知金利</th><th>推定月利息分（概算）</th></tr>`;
         let approxBal = startAmount;
-        let currentRunMonthly = startPayment;
+        let currentRunMonthly = startMonthlyPayment;
         let currentRunBonus = startBonus;
 
         historyData.forEach((item, index) => {
@@ -485,7 +515,7 @@
             if (index < historyData.length - 1) {
                 let dur = historyData[index + 1].year - item.year;
                 let annualPaid = (currentRunMonthly * 12) + (currentRunBonus * 2);
-                let annualInterest = mInterest * 12; // 簡易平均
+                let annualInterest = mInterest * 12;
                 approxBal -= (annualPaid - annualInterest) * dur;
                 if(approxBal < estimatedBalance) approxBal = estimatedBalance;
             }
@@ -497,14 +527,11 @@
         let rNew = latestRate / 100 / 12;
         let trueRequiredMonthly = 0;
 
-        let balanceForMonthly = estimatedBalance; 
-
         if (repaymentMethod === 'equal_payment') {
             if(rNew > 0) {
                 let factor = Math.pow(1 + rNew, remMonths);
                 trueRequiredMonthly = estimatedBalance * rNew * factor / (factor - 1);
-                if (bonusPaymentType === 'has_bonus') {
-                    // ボーナス返済割合を考慮した毎月必要額の調整
+                if (currentPaymentType === 'has_bonus') {
                     let totalCurAnnual = (currentMonthlyPayment * 12) + (currentBonusPayment * 2);
                     if (totalCurAnnual > 0) {
                         trueRequiredMonthly = trueRequiredMonthly * (currentMonthlyPayment * 12 / totalCurAnnual);
@@ -520,77 +547,70 @@
         }
 
         let max125Monthly = currentMonthlyPayment * 1.25;
-
-        let targetBalance = 0;
-        if (rNew > 0) {
-            let factor = Math.pow(1 + rNew, remMonths);
-            targetBalance = startPayment * (factor - 1) / (rNew * factor);
-        } else {
-            targetBalance = startPayment * remMonths;
-        }
-
-        let neededPrepayment = estimatedBalance - targetBalance;
         let currentMonthlyInterest = Math.round(estimatedBalance * (latestRate / 100) / 12);
 
+        // ユーザーが「毎月の返済額を希望金額に抑えたい」場合の逆算（例：現在の月々より2万円下げたい場合の必要繰上返済額を算出する参考ロジック）
+        // 目標月額を仮に「現在月額の80%」または「現在月額 - 2万円」等に設定して逆算額を提示
+        let targetReducedMonthly = currentMonthlyPayment > 20000 ? currentMonthlyPayment - 20000 : currentMonthlyPayment * 0.9;
+        let targetBalanceForReduced = 0;
+        if (rNew > 0) {
+            let factor = Math.pow(1 + rNew, remMonths);
+            targetBalanceForReduced = (targetReducedMonthly * (factor - 1)) / (rNew * factor);
+        } else {
+            targetBalanceForReduced = targetReducedMonthly * remMonths;
+        }
+        let neededPrepayForReduction = estimatedBalance - targetBalanceForReduced;
+        if(neededPrepayForReduction < 0) neededPrepayForReduction = 0;
+
         let compHtml = `
-            現在の最新適用金利（<strong>${latestRate}%</strong>）、残高（<strong>${(estimatedBalance/10000).toFixed(1)}万円</strong>）、残期間（<strong>${remainingYears}年</strong>）をもとに算出しました。<br><br>
+            現在の適用金利（<strong>${latestRate}%</strong>）、残高（<strong>${(estimatedBalance/10000).toFixed(1)}万円</strong>）、残期間（<strong>${remainingYears}年</strong>）をもとに算出しました。<br><br>
             ・<strong>今月の実質利息額（概算）:</strong> 約 <strong>${currentMonthlyInterest.toLocaleString()} 円</strong><br>
             ・<strong>現在の実際の毎月返済額:</strong> <strong>${(currentMonthlyPayment/10000).toFixed(1)} 万円</strong><br>
         `;
 
-        if (bonusPaymentType === 'has_bonus') {
-            compHtml += `
-                ・<strong>現在の実際のボーナス返済額（1回あたり）:</strong> <strong>${(currentBonusPayment/10000).toFixed(1)} 万円</strong> （年2回合計: <strong>${((currentBonusPayment*2)/10000).toFixed(1)} 万円/年</strong>）<br>
-                ・<strong>現在の年間ローン総負担額:</strong> <strong style="color:#c0392b;">${((currentMonthlyPayment*12 + currentBonusPayment*2)/10000).toFixed(1)} 万円 / 年</strong><br>
-            `;
+        if (currentPaymentType === 'has_bonus') {
+            compHtml += `・<strong>現在の実際のボーナス返済額（1回あたり）:</strong> <strong>${(currentBonusPayment/10000).toFixed(1)} 万円</strong> （年2回合計: <strong>${((currentBonusPayment*2)/10000).toFixed(1)} 万円/年</strong>）<br>`;
+        } else {
+            compHtml += `・<strong>ボーナス払い設定:</strong> なし（月々均等返済に一本化されています）<br>`;
         }
 
         compHtml += `
-            ・<strong>本来必要な毎月返済額（理論値）:</strong> <strong style="color:#c0392b;">${(trueRequiredMonthly/10000).toFixed(1)} 万円</strong><br>
+            ・<strong>理論上の必要毎月返済額:</strong> <strong style="color:#c0392b;">${(trueRequiredMonthly/10000).toFixed(1)} 万円</strong><br>
             <div class="alert-warning" style="margin-top:10px;">
                 📈 <strong>【5年後の見直し時（125％ルール適用時）の予測支払額】</strong><br>
-                現在の5年ルール・125%ルールに基づき、もし5年後の見直しを迎えて返済額が上がった場合、直前の毎月返済額（${(currentMonthlyPayment/10000).toFixed(1)}万円）の1.25倍にあたる上限額 <strong>${(max125Monthly/10000).toFixed(1)} 万円</strong>（約 ${Math.round(max125Monthly).toLocaleString()} 円）へと跳ね上がります。<br>
-                （※ボーナス払いがある場合、ボーナス側も金利上昇や見直しに伴う負担増・未払い利息発生のリスクが連動します）
+                金利上昇によって見直しを迎えた場合、上限額にあたる <strong>${(max125Monthly/10000).toFixed(1)} 万円</strong>（約 ${Math.round(max125Monthly).toLocaleString()} 円）へと跳ね上がるリスクがあります。
             </div>
             <hr style="border:0; border-top:1px dashed #ccc; margin:15px 0;">
-            🎯 <strong>【当初の年間返済総額に支払いを戻すための逆算シミュレーション】</strong><br>
+            🎯 <strong>【希望月額（今より約2万円減の ${(targetReducedMonthly/10000).toFixed(1)}万円）にするための逆算繰上返済額】</strong><br>
+            現在の金利のまま毎月の負担を軽くしたい場合、約 <strong style="color:#e67e22; font-size:16px;">${(neededPrepayForReduction/10000).toFixed(1)} 万円</strong> の期間短縮型繰上返済を行うことで月々の支払いを軽減できます。
         `;
-
-        if (estimatedBalance <= targetBalance) {
-            compHtml += `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✨ 現在の条件でも、残高の減少ペースは順調です！追加の繰上返済は急ぎ必要ありません。</div>`;
-        } else {
-            let diffPrepay = neededPrepayment / 10000;
-            compHtml += `
-                現在の金利（${latestRate}%）のまま、負担を当初の水準まで下げるためには、今すぐ期間短縮型の繰上返済として約 <strong style="color:#e67e22; font-size:16px;">${diffPrepay > 0 ? diffPrepay.toFixed(1) : 0} 万円</strong> の現金投入が必要です。<br>
-                <div class="alert-warning" style="margin-top:10px;">⚠️ ※ただし、これは「変動金利のまま今の金利が継続した場合」の計算です。もし<strong>固定金利へ切り替える場合、固定金利は変動より高いため、シミュレーション上の必要額よりもさらに月々およびボーナス時の負担が大きくなります</strong>。</div>
-            `;
-        }
 
         let totalFinishAge = currentAge + remainingYears;
         let pairHealthHtml = `・<strong>世帯主の年齢:</strong> ${currentAge}歳 （完済時予想年齢: ${totalFinishAge}歳）<br>`;
-        
-        if (bonusPaymentType === 'has_bonus') {
-            pairHealthHtml += `
-                <div class="alert-warning">
-                    🎁 <strong>【ボーナス払い併用に関する詳細リスク・追い金評価】</strong><br>
-                    ・現在のボーナス返済額：<strong>年2回合計 約 ${((currentBonusPayment * 2)/10000).toFixed(1)} 万円</strong><br>
-                    ・<strong>【見落としがちな重大リスク】</strong> 金利が上がり続けたり高止まりした状態で維持された場合、毎月の返済だけでなくボーナス時にも重い利息がのしかかります。もし将来的に会社の業績悪化や定年・役職定年等でボーナスがカット・減額された場合、ボーナス払いの穴埋め（または銀行へのリスケ・期間延長の再相談）をしないと、<strong>払込期間終了時に大きな「追い金（一括精算）」が発生するリスク</strong>があります。
-                </div><br>
-            `;
+
+        // ボーナス払いの変更履歴評価
+        if (startPaymentType === 'has_bonus' && currentPaymentType === 'none') {
+            pairHealthHtml += `<div class="alert-success">💡 <strong>【ボーナス払い変更の評価】</strong> 当初はボーナス払いありでしたが、現在は「なし（月々均等）」へ移行されています。ボーナス変動リスクやボーナスカット時の家計破綻リスクを事前に排除できており、非常に安全性の高い健全なキャッシュフローに改善されています！</div><br>`;
+        } else if (startPaymentType === 'none' && currentPaymentType === 'has_bonus') {
+            pairHealthHtml += `<div class="alert-warning">⚠️ <strong>【ボーナス払い変更の評価】</strong> 当初は月々均等でしたが、現在はボーナス払いを追加されています。今後の業績・ボーナス支給額の変動による未払い利息や追い金リスクに十分ご注意ください。</div><br>`;
+        } else if (startPaymentType === 'has_bonus' && currentPaymentType === 'has_bonus') {
+            pairHealthHtml += `<div class="alert-warning">⚠️ 当初から現在までボーナス払いを継続中です。支給額が安定しているうちは有効ですが、減額リスクへの備えが必要です。</div><br>`;
+        } else {
+            pairHealthHtml += `<div style="color:#27ae60; font-weight:bold;">✨ 当初から現在までボーナス払いなし（月々均等）で安定した返済を継続されています。</div><br>`;
         }
 
         if (loanType === 'pair') {
             pairHealthHtml += `・<strong>配偶者の年齢:</strong> ${spouseAge}歳<br>`;
             if (currentAge >= 55 || spouseAge >= 55 || totalFinishAge >= 70) {
-                pairHealthHtml += `<div class="alert-danger">🚨 【ペアローン・年齢リスク】夫婦それぞれが借入を抱えており、役職定年や健康・収入変化に対するリスクが大きくなる時期です。団信のカバー範囲を再確認してください。</div>`;
+                pairHealthHtml += `<div class="alert-danger">🚨 【ペアローン・年齢リスク】夫婦それぞれが借入を抱えており、収入変化に対するリスクが高い状態です。</div>`;
             } else {
                 pairHealthHtml += `<div class="alert-warning">⚠️ ペアローンのため、万が一の就業不能時や収入減への備えをご確認ください。</div>`;
             }
         } else {
             if (totalFinishAge >= 70) {
-                pairHealthHtml += `<div class="alert-danger">⚠️ 完済時年齢が ${totalFinishAge}歳となります。定年退職後もローン返済が続くため、退職金や貯蓄からの繰上返済計画が必須です。</div>`;
+                pairHealthHtml += `<div class="alert-danger">⚠️ 完済時年齢が ${totalFinishAge}歳となります。定年退職後もローン返済が続くため、計画的な繰上返済が必須です。</div>`;
             } else if (totalFinishAge >= 65) {
-                pairHealthHtml += `<div class="alert-warning">⚠️ 完済時年齢が ${totalFinishAge}歳となります。65歳定年退職の時期と重なるため、退職後のキャッシュフローにご注意ください。</div>`;
+                pairHealthHtml += `<div class="alert-warning">⚠️ 完済時年齢が ${totalFinishAge}歳となります。65歳定年退職の時期と重なるためご注意ください。</div>`;
             } else {
                 pairHealthHtml += `<div style="color:#27ae60; font-weight:bold;">✨ 65歳未満で完済予定のスケジュールです。</div>`;
             }
@@ -602,31 +622,52 @@
             if(kInput && kInput.value !== "") kids.push(Number(kInput.value));
         }
 
-        let lifePlanAdviceHtml = `🏠 <strong>回答者の意思に沿った完全網羅型アドバイス（実務的アプローチ）:</strong><br>`;
-        lifePlanAdviceHtml += `
-            <div class="strategy-box" style="border-left: 4px solid #27ae60; background:#f0f9f4;">
-                <h4 style="color:#276749; margin-top:0;">🟢 【家を維持・対策するための現実的ステップ】</h4>
-                ・<strong>① まずは「今取引のある銀行」への相談が最優先:</strong> 
-                金利上昇やボーナス払いの負担切迫を感じたら、他行へ走る前にまずは現在ローンを借りている取引銀行の窓口へ行きましょう。「固定金利への切り替え」や「条件変更（返済期間の再延長、ボーナス払いの廃止・月々払いへの一本化など）」の相談が可能です。<br><br>
-                ・<strong>② 借り換えにおける「担保評価割れ・フルローン満額不出」のリスク:</strong> 
-                新築時と異なり、現在の建物の築年数経過によって担保評価が低下している場合、他行での借り換え時に残高全額の融資（満額下りる）が受けられず、**差額の現金（自己資金）を用意しなければ借り換えができない**壁があります。そのため、まずは既存行での条件変更交渉が現実的です。<br><br>
-                ・<strong>③ 固定金利切替時・期間延長の調整:</strong> 
-                固定金利は変動より高いため、そのまま切り替えると支払いが跳ね上がります。年齢的に許す範囲での**「返済期間の延長（温存）」**や、ボーナス払いのが大きい場合は**「ボーナス払いをなくして月々均等へ再構築する」**などのコンサルティングを銀行員と行うことが、将来の「追い金」を防ぐ最大の防御策となります。
-            </div>
-        `;
+        // 目的・リスクに応じた動的メッセージ（強いメッセージ vs 良い評価＆プラスのアドバイス）
+        let adviceHtml = `🏠 <strong>【パーソナライズド・アドバイス】</strong><br>`;
+
+        if (simulationPurpose === 'refinance_variable') {
+            if (latestRate <= 1.0 && currentPaymentType === 'none') {
+                adviceHtml += `
+                    <div class="alert-success" style="border-left: 4px solid #27ae60;">
+                        🟢 <strong>【変動リスク：低〜中（良好な状態です）】</strong><br>
+                        現在は低金利（${latestRate}%）を維持できており、さらにボーナス払いを排除して月々均等に一本化されているため、金利上昇時の衝撃や家計管理の難易度が大幅に下がっています。現時点で無理な借り換えや慌てた繰上返済を急ぐ必要性は低く、手元資金を厚めに残すスタイルが非常に有利です。
+                    </div>
+                `;
+            } else {
+                adviceHtml += `
+                    <div class="alert-danger" style="border-left: 4px solid #c0392b;">
+                        🚨 <strong>【変動リスク：高（強い注意喚起メッセージ）】</strong><br>
+                        金利上昇局面において、現在の変動金利および残高・返済方式のままでは、将来的な金利見直し時の急激な負担増（125%ルール到達や未払い利息）に直撃されるリスクが非常に高い状態です。他行への借り換えシミュレーションや、取引銀行での「固定金利への一部切替」「期間延長を伴う条件変更」の協議を今すぐ検討してください。放置すると家計破綻や売却を余儀なくされる恐れがあります。
+                    </div>
+                `;
+            }
+        } else if (simulationPurpose === 'secure_fixed') {
+            adviceHtml += `
+                <div class="alert-success" style="border-left: 4px solid #27ae60;">
+                    🟢 <strong>【固定金利による安心感の評価】</strong><br>
+                    全期間固定または固定期間中の安心感を重視されている非常に手堅い選択をされています。金利変動の恐怖から解放されている分、もし「さらに毎月の返済額を抑えたい」とお考えの場合は、先ほど算出した「希望月額にするための必要繰上返済額」を参考に、計画的な繰上返済を行って固定費のさらなるスリム化を図るとより盤石になります。
+                </div>
+            `;
+        } else {
+            adviceHtml += `
+                <div class="strategy-box" style="border-left: 4px solid #0056b3;">
+                    🔵 <strong>【購入検討・逆算シミュレーションの評価】</strong><br>
+                    将来のマイホーム購入や住み替えを想定した逆算利用として、非常に賢明なアプローチです。ボーナス払いに頼らず「月々均等返済」をベースに予算を組むことで、収入変動に対する安全マージンを大きく確保できます。お子様の教育費ピーク時期と完済年齢のバランスを照らし合わせながら、無理のない借入額を設定してください。
+                </div>
+            `;
+        }
 
         if (kids.length > 0) {
-            lifePlanAdviceHtml += `<br>🎓 <strong>お子様の教育費ピーク（${kids.join('歳, ')}歳）</strong>と修繕費（約 150万〜300万円）、さらにボーナス払いの減額リスクが重なる時期のキャッシュフローに十分ご注意ください。`;
+            adviceHtml += `<br>🎓 お子様の年齢（${kids.join('歳, ')}歳）をもとに、教育費がピークを迎える時期とローンの返済負担が重ならないよう、事前のキャッシュフロー対策をおすすめします。`;
         }
 
         const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked, input[name="checkIntent"]:checked').length;
-        let checkSummaryHtml = `チェック選択数: <strong>${checkedCount}項目</strong>選択中。<br>`;
-        checkSummaryHtml += `✨ ご自身の状況やお考えに合わせて自由にチェックを入れ、シミュレーション結果とあわせてご活用ください。`;
+        let checkSummaryHtml = `チェック選択数: <strong>${checkedCount}項目</strong>選択中。<br>ご自身の目的と照らし合わせ、実務的な対策にお役立てください。`;
 
         document.getElementById('resHistoryTable').innerHTML = tableHtml;
         document.getElementById('res125Comparison').innerHTML = compHtml;
         document.getElementById('resPairHealthRisk').innerHTML = pairHealthHtml;
-        document.getElementById('resLifePlanAdvice').innerHTML = lifePlanAdviceHtml;
+        document.getElementById('resLifePlanAdvice').innerHTML = adviceHtml;
         document.getElementById('resCheckSummary').innerHTML = checkSummaryHtml;
 
         const resultBox = document.getElementById('resultBox');
