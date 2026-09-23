@@ -3,53 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン変動金利・総合リスク＆現在地診断</title>
+    <title>住宅ローン変動権利チェックシート＆ローン計算</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            background-color: #f4f6f8;
+            background-color: #f4f7f6;
             margin: 0;
             padding: 20px;
         }
         .container {
-            max-width: 750px;
+            max-width: 800px;
             margin: 0 auto;
             background: #fff;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        .brand-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 15px;
-        }
-        .brand-header img {
-            max-width: 120px;
-            height: auto;
             border-radius: 8px;
-            margin-bottom: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        .brand-title {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #64748b;
-            letter-spacing: 0.05em;
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .header img {
+            max-height: 60px;
+            margin-right: 15px;
         }
         h1 {
-            font-size: 1.4rem;
-            color: #1e293b;
-            border-bottom: 3px solid #3b82f6;
-            padding-bottom: 10px;
-            margin-top: 0;
+            font-size: 22px;
+            color: #0056b3;
+            margin: 0;
         }
-        .intro {
-            font-size: 0.95rem;
-            color: #475569;
-            margin-bottom: 25px;
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            border-left: 4px solid #0056b3;
+            padding-left: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
         }
         .form-group {
             margin-bottom: 20px;
@@ -57,319 +51,150 @@
         label {
             display: block;
             font-weight: bold;
-            margin-bottom: 6px;
-            color: #1e293b;
-            font-size: 0.95rem;
+            margin-bottom: 5px;
+            color: #444;
+        }
+        .note {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
         }
         input[type="number"], select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             box-sizing: border-box;
+            font-size: 16px;
+        }
+        input::placeholder {
+            color: #aaa;
         }
         .checkbox-group {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            margin-top: 5px;
+            background: #fafafa;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
         }
-        .checkbox-group label {
-            font-weight: normal;
+        .checkbox-label {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            font-weight: normal;
+            margin-bottom: 10px;
             cursor: pointer;
         }
-        .checkbox-group input {
-            margin-right: 8px;
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 10px;
             width: 18px;
             height: 18px;
         }
-        button {
-            background-color: #3b82f6;
+        .btn {
+            background-color: #0056b3;
             color: white;
             border: none;
-            padding: 14px 20px;
-            font-size: 1.05rem;
+            padding: 12px 20px;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             width: 100%;
-            transition: background-color 0.2s;
-            margin-top: 10px;
+            margin-top: 20px;
+            transition: background 0.3s;
         }
-        button:hover {
-            background-color: #2563eb;
+        .btn:hover {
+            background-color: #004085;
         }
         .result-box {
             margin-top: 30px;
-            padding: 25px;
-            border-radius: 8px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            padding: 20px;
+            background: #eef9ff;
+            border: 1px solid #b8daff;
+            border-radius: 4px;
             display: none;
         }
-        .danger-level {
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 10px 15px;
-            border-radius: 6px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .level-safe { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .level-warning { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
-        .level-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        
-        .result-section {
-            margin-bottom: 20px;
-        }
-        .result-section h3 {
-            font-size: 1.05rem;
-            color: #1e293b;
-            border-left: 4px solid #3b82f6;
-            padding-left: 8px;
-            margin-bottom: 8px;
-        }
-        .result-section p, .result-section ul {
-            font-size: 0.95rem;
-            color: #334155;
-        }
-        .result-section ul {
-            padding-left: 20px;
-            margin: 5px 0;
-        }
-        .highlight-num {
-            font-weight: bold;
-            color: #2563eb;
-        }
-        .strong-warning-box {
-            background: #fff1f2;
-            border: 2px dashed #e11d48;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-        }
-        .strong-warning-box h4 {
-            color: #be123c;
+        .result-box h3 {
             margin-top: 0;
-            font-size: 1.05rem;
-        }
-        .strong-warning-box p {
-            color: #881337;
-            margin-bottom: 0;
-            font-size: 0.9rem;
-            font-weight: bold;
+            color: #004085;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- ブランドヘッダー（ロゴ＆名称） -->
-    <div class="brand-header">
-        <img src="logo.jpg" alt="SC17 DOTENBEAR ロゴ">
-        <div class="brand-title">SC17 〜DOTENBEAR〜 Presents</div>
+    <!-- ヘッダー（ロゴとタイトル） -->
+    <div class="header">
+        <img src="logo.jpg" alt="ロゴ">
+        <h1>住宅ローン変動権利チェックシート＆ローン計算</h1>
     </div>
 
-    <h1>住宅ローン変動金利・総合リスク＆現在地診断</h1>
-    <p class="intro">「いま自分のローンはどこにいて、どこからが危険水域なのか？」金利上昇・ライフイベント・年齢・売却リスクを多角的にシミュレーションします。</p>
-
-    <div class="form-group">
-        <label for="balance">現在の住宅ローン残高（万円）</label>
-        <input type="number" id="balance" value="3000" min="100" max="20000">
-    </div>
-
-    <div class="form-group">
-        <label for="years">残り返済期間（年）</label>
-        <input type="number" id="years" value="25" min="1" max="40">
-    </div>
-
-    <div class="form-group">
-        <label for="currentRate">現在の適用金利（％）</label>
-        <input type="number" id="currentRate" value="0.5" step="0.05" min="0.1" max="5.0">
-    </div>
-
-    <div class="form-group">
-        <label for="elapsed">借入からの経過年数</label>
-        <select id="elapsed">
-            <option value="0">最近借り入れたばかり（0〜3年）</option>
-            <option value="5" selected>5年程度経過</option>
-            <option value="10">10年程度経過</option>
-            <option value="15">15年以上経過（折り返し地点）</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="ageCategory">あなたの現在の年齢層</label>
-        <select id="ageCategory">
-            <option value="30">30代（まだ期間延長・借り換えの余地あり）</option>
-            <option value="40" selected>40代（教育費と老後が重なる世代）</option>
-            <option value="50">50代以降（期間延長や借り換えの審査・年齢制限の壁）</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label>重なりうるライフイベント・家計負荷（複数選択可）</label>
-        <div class="checkbox-group">
-            <label><input type="checkbox" id="evEdu" checked> 子どもの教育費ピーク（大学進学など）が控えている・重なっている</label>
-            <label><input type="checkbox" id="evCar"> クルマの買い替えや維持費の負担が大きい</label>
-            <label><input type="checkbox" id="evHouse"> 外壁・屋根・水回りなどの大規模修繕・リフォーム予定がある</label>
-            <label><input type="checkbox" id="evOtherLoan"> マイカーローンや教育ローンなど、住宅ローン以外の借入がある</label>
+    <form id="loanForm">
+        <!-- セクション1：ローン情報入力 -->
+        <div class="section-title">1. 現在のローン情報入力</div>
+        
+        <div class="form-group">
+            <label for="currentBalance">現在のローン残高</label>
+            <input type="number" id="currentBalance" placeholder="例：現在のローン残高を入力してください">
         </div>
-    </div>
 
-    <button onclick="runDiagnosis()">総合リスク診断を実行する</button>
+        <div class="form-group">
+            <label for="remainingYears">残り返済期間（年）</label>
+            <input type="number" id="remainingYears" placeholder="例：残り年数を入力してください">
+        </div>
 
+        <div class="form-group">
+            <label for="currentRate">現在の適用金利（％）</label>
+            <input type="number" step="0.01" id="currentRate" placeholder="例：0.5">
+        </div>
+
+        <!-- セクション2：チェックシート -->
+        <div class="section-title">2. 変動権利・状況チェック</div>
+        <div class="form-group checkbox-group">
+            <p class="note">※下の「□」をクリックして、当てはまる項目にチェックしてください。</p>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" name="checkItem"> 金利上昇リスクについての説明を受けたことがある
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="checkItem"> 5年ルールや125%ルールについて理解している
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="checkItem"> 金利が1%上がっても家計に余裕がある
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="checkItem"> 固定金利への借り換えを検討したことがある
+            </label>
+        </div>
+
+        <button type="button" class="btn" onclick="calculateLoan()">診断・計算する</button>
+    </form>
+
+    <!-- 結果表示エリア -->
     <div id="resultBox" class="result-box">
-        <div id="dangerLevel" class="danger-level"></div>
-
-        <div class="result-section">
-            <h3>1. 金利上昇時のインパクト試算</h3>
-            <p>もし金利が <span id="rUp" class="highlight-num">1.5%</span> 上昇（現在金利 ＋ 1.5%）した場合：</p>
-            <ul>
-                <li>毎月の返済額の変化： 約 <span id="diffMonthly" class="highlight-num">0</span> 円 /月のアップ</li>
-                <li>総返済額の膨らみ： 約 <span id="diffTotal" class="highlight-num">0</span> 万円の増加</li>
-            </ul>
-        </div>
-
-        <div class="result-section">
-            <h3>2. 現在地と「許容範囲」の判定</h3>
-            <p id="zoneComment"></p>
-        </div>
-
-        <div class="result-section">
-            <h3>3. 将来潜む「見えないリスク」の警告</h3>
-            <ul id="riskList"></ul>
-        </div>
-
-        <div class="result-section">
-            <h3>4. 今すぐ取るべき具体的な対策アドバイス</h3>
-            <ul id="adviceList"></ul>
-        </div>
-
-        <!-- アプリの確認だけで終わらせないための強力な注意喚起 -->
-        <div class="strong-warning-box">
-            <h4>⚠️【警告】「シミュレーションして満足」で終わらせないために</h4>
-            <p>変動金利の怖さは「気づいた時にはすでに手遅れ（金利急上昇・年齢レッドカード・売却時の大赤字）」になる点です。この結果を見て「まだ大丈夫」フリをするのではなく、今日から家計の固定費を見直し、予備資金を確保し、動ける年齢・動ける金利のうちに次の手を打ってください。運命は行動でしか変わりません。</p>
-        </div>
+        <h3>診断結果</h3>
+        <p id="resultText"></p>
     </div>
 </div>
 
 <script>
-function runDiagnosis() {
-    const balance = parseFloat(document.getElementById('balance').value) * 10000;
-    const years = parseInt(document.getElementById('years').value);
-    const currentRate = parseFloat(document.getElementById('currentRate').value) / 100;
-    const elapsed = parseInt(document.getElementById('elapsed').value);
-    const ageCategory = parseInt(document.getElementById('ageCategory').value);
-    
-    const evEdu = document.getElementById('evEdu').checked;
-    const evCar = document.getElementById('evCar').checked;
-    const evHouse = document.getElementById('evHouse').checked;
-    const evOtherLoan = document.getElementById('evOtherLoan').checked;
+    function calculateLoan() {
+        const balance = document.getElementById('currentBalance').value;
+        const years = document.getElementById('remainingYears').value;
+        const rate = document.getElementById('currentRate').value;
+        
+        const resultBox = document.getElementById('resultBox');
+        const resultText = document.getElementById('resultText');
 
-    const rCurr = currentRate / 12;
-    const nCurr = years * 12;
-    let monthlyCurr = 0;
-    if (rCurr === 0) {
-        monthlyCurr = balance / nCurr;
-    } else {
-        monthlyCurr = balance * rCurr * Math.pow(1 + rCurr, nCurr) / (Math.pow(1 + rCurr, nCurr) - 1);
+        if(!balance || !years || !rate) {
+            alert('すべての項目を入力してください。');
+            return;
+        }
+
+        // 簡単な簡易計算・表示の例
+        resultBox.style.display = 'block';
+        resultText.innerHTML = `ご入力ありがとうございます。<br>
+        残高: <strong>${Number(balance).toLocaleString()}円</strong> / 残り期間: <strong>${years}年</strong> / 金利: <strong>${rate}%</strong><br>
+        現在の状況をもとに、変動金利の見直しやリスク対策を検討することをお勧めします。`;
     }
-
-    const futureRate = currentRate + 0.015;
-    const rFut = futureRate / 12;
-    let monthlyFut = 0;
-    if (rFut === 0) {
-        monthlyFut = balance / nCurr;
-    } else {
-        monthlyFut = balance * rFut * Math.pow(1 + rFut, nCurr) / (Math.pow(1 + rFut, nCurr) - 1);
-    }
-
-    const diffM = Math.round(monthlyFut - monthlyCurr);
-    const diffT = Math.round((monthlyFut * nCurr - (monthlyCurr * nCurr)) / 10000);
-
-    document.getElementById('rUp').innerText = (currentRate * 100 + 1.5).toFixed(2) + '%';
-    document.getElementById('diffMonthly').innerText = diffM.toLocaleString();
-    document.getElementById('diffTotal').innerText = diffT.toLocaleString();
-
-    let riskScore = 0;
-    if (diffM > 25000) riskScore += 2;
-    else if (diffM > 15000) riskScore += 1;
-
-    if (ageCategory === 50) riskScore += 2;
-    else if (ageCategory === 40) riskScore += 1;
-
-    if (elapsed >= 10) riskScore += 1;
-
-    let eventCount = 0;
-    if (evEdu) eventCount++;
-    if (evCar) eventCount++;
-    if (evHouse) eventCount++;
-    if (evOtherLoan) { eventCount++; riskScore += 2; }
-
-    if (eventCount >= 2) riskScore += 2;
-    else if (eventCount === 1) riskScore += 1;
-
-    const levelBox = document.getElementById('dangerLevel');
-    const zoneComment = document.getElementById('zoneComment');
-    const riskList = document.getElementById('riskList');
-    const adviceList = document.getElementById('adviceList');
-
-    riskList.innerHTML = '';
-    adviceList.innerHTML = '';
-
-    let zoneText = "";
-    let riskHTML = "";
-    let adviceHTML = "";
-
-    if (riskScore >= 5) {
-        levelBox.className = "danger-level level-danger";
-        levelBox.innerText = "【危険水域】家計破綻・売却時持ち出しリスクが高まっています";
-        zoneText = `現在の金利水準では耐えられても、金利が1.5%上がった場合の月々約<span class="highlight-num">${diffM.toLocaleString()}円</span>の負担増に加え、複数のライフイベントや年齢の壁が重なっています。今すぐ防衛策が必要です。`;
-    } else if (riskScore >= 3) {
-        levelBox.className = "danger-level level-warning";
-        levelBox.innerText = "【注意水域】油断禁物。金利上昇とライフイベントの衝突に備えを";
-        zoneText = `毎月の負担増と、今後の教育費や修繕費のタイミング次第で家計が圧迫される可能性があります。早めのキャッシュフロー見直しが吉です。`;
-    } else {
-        levelBox.className = "danger-level level-safe";
-        levelBox.innerText = "【安全圏〜安定】今のところ余裕がありますが、定期的な見直しを";
-        zoneText = `現時点でのリスク耐性は比較的高い状態です。ただし、今後の長期的な金利動向やライフステージの変化には注意を払いましょう。`;
-    }
-
-    riskHTML += `<li><strong>「元金が減らない罠」と売却時の持ち出しリスク：</strong> 金利が上がると返済額に占める「利息の割合」が増え、元金の減りが極端に遅くなります。その状態で数年後に「家を売却しよう」となった際、売却額でローンを完済できず、<strong>手元から現金を持ち出さなければ売れない（オーバーローン）</strong>状態に陥るリスクがあります。</li>`;
-    
-    if (ageCategory >= 40) {
-        riskHTML += `<li><strong>年齢による「借り換え・期間延長」の壁：</strong> 50代以降に金利が急上昇した場合、銀行の年齢制限により「返済期間の延長（リスケ）」や「固定金利への借り換え」の審査が通らなくなる可能性が高まります。動けるのは40代のいまが勝負です。</li>`;
-    }
-
-    if (eventCount > 0) {
-        riskHTML += `<li><strong>マルチローン・複合支出のバッティング：</strong> 変動金利の上昇局面と、教育費のピーク、クルマの買い替え、家の修繕費が同時に直撃すると、一気に家計のキャッシュフローがショートする危険があります。</li>`;
-    }
-
-    if (evOtherLoan) {
-        riskHTML += `<li><strong>住宅ローン以外の借入の重み：</strong> マイカーローンなどは住宅ローンに比べて金利が高く、金利上昇局面では家計へのダブルパンチになります。</li>`;
-    }
-
-    adviceHTML += `<li><strong>繰上げ返済の「タイミングと現金の残し方」の黄金ルール：</strong> 手元現金をすべて繰上げ返済に充てるのは禁物です。教育費や修繕費に備えた「生活防衛資金」を確保した上で、余剰資金を「期間短縮型」の繰上げ返済に回し、元金を確実に削りましょう。</li>`;
-    
-    if (ageCategory <= 40 && elapsed <= 10) {
-        adviceHTML += `<li><strong>固定金利への移行・ミックスプランの検討：</strong> 金利がまだ低い今のうちに、一部だけでも全期間固定や段階的な固定金利へ切り替える、あるいは「これ以上上がったら危険」という許容ライン（ストレステスト）を家族で共有しておきましょう。</li>`;
-    }
-
-    adviceHTML += `<li><strong>「いつでも売れる家」の資産価値意識：</strong> 万が一の際、売却してもローンが残らないか（または持ち出しが許容範囲か）、周辺の不動産相場や残債のスピードを年に一度は確認する習慣をつけましょう。</li>`;
-
-    zoneComment.innerHTML = zoneText;
-    riskList.innerHTML = riskHTML;
-    adviceList.innerHTML = adviceHTML;
-
-    document.getElementById('resultBox').style.display = "block";
-    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
-}
 </script>
 
 </body>
