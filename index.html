@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>住宅ローン金利上昇・家計防衛シミュレーター＆診断</title>
+    <style>
+        body { font-family: sans-serif; max-width: 650px; margin: 0 auto; padding: 15px; background: #f9f9f9; color: #333; line-height: 1.5; }
+        .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { font-size: 18px; color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 5px; margin-top: 0; }
+        h3 { font-size: 15px; color: #34495e; margin-top: 15px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 3px; font-weight: bold; font-size: 13px; }
+        input[type="number"], select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .checkbox-group { margin-bottom: 10px; font-size: 13px; display: flex; align-items: flex-start; gap: 8px; }
+        .checkbox-group input { margin-top: 3px; }
+        button { background: #2c3e50; color: #fff; border: none; padding: 12px; font-size: 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #34495e; }
+        .result-box { margin-top: 15px; padding: 15px; background: #eef2f3; border-radius: 4px; font-size: 13px; }
+        .advice-box { margin-top: 15px; padding: 15px; background: #fff8e1; border-left: 4px solid #fbc02d; border-radius: 4px; font-size: 13px; }
+        .alert { color: #c0392b; font-weight: bold; }
+        .safe { color: #27ae60; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- 【機能1】将来シミュレーション部 -->
+<div class="card">
+    <h2>1. 住宅ローン将来シミュレーション</h2>
+    <div class="form-group">
+        <label>当初借入額（万円）:</label>
+        <input type="number" id="principal" value="4000">
+    </div>
+    <div class="form-group">
+        <label>当初金利（％）:</label>
+        <input type="number" step="0.01" id="initialRate" value="0.40">
+    </div>
+    <div class="form-group">
+        <label>当初の借入期間（年）:</label>
+        <input type="number" id="years" value="35">
+    </div>
+    <div class="form-group">
+        <label>金利上昇後の新金利（％）:</label>
+        <input type="number" step="0.01" id="newRate" value="1.75">
+    </div>
+
+    <button onclick="runSimulation()">シミュレーションを実行</button>
+
+    <div class="result-box" id="simResult" style="display:none;">
+        <h3>【試算結果】</h3>
+        <p>当初の毎月返済額: <span id="resInitial"></span> 円</p>
+        <p>5年経過時の残債（概算）: <span id="resBalance"></span> 万円</p>
+        <p>6年目からの本来の必要返済額: <span id="resTrue"></span> 円</p>
+        <p>125%ルールのキャップ上限額: <span id="resCap"></span> 円</p>
+        <p><b>実際の引き落とし額（上限適用）: <span id="resActual" style="color:#d35400;"></span> 円</b></p>
+        <p id="simWarning" style="margin-top: 10px;"></p>
+    </div>
+</div>
+
+<!-- 【機能2】個別セルフチェック＆アドバイス部 -->
+<div class="card">
+    <h2>2. 家計防衛・現状チェックと個別アドバイス</h2>
+    <p style="font-size: 12px; color: #666;">今のあなたの状況にあてはまるものにチェックを入れてください。</p>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="chk1">
+        <label for="chk1" style="font-weight:normal;">教育費や車の買い替え、家の修繕などの大きな出費の山が今後控えている</label>
+    </div>
+    <div class="checkbox-group">
+        <input type="checkbox" id="chk2">
+        <label for="chk2" style="font-weight:normal;">貯蓄の大部分が「現金・普通預金」であり、インフレや預金金利以外の資産対策をしていない</label>
+    </div>
+    <div class="checkbox-group">
+        <input type="checkbox" id="chk3">
+        <label for="chk3" style="font-weight:normal;">すでに家計の毎月の収支に余裕がなく、数万円のアップでも家計が圧迫される</label>
+    </div>
+    <div class="checkbox-group">
+        <input type="checkbox" id="chk4">
+        <label for="chk4" style="font-weight:normal;">残債がまだ大きく残っており、残り期間も長く残っている（例：残り20年以上など）</label>
+    </div>
+
+    <button onclick="runAdvice()">診断結果・今後の対策を見る</button>
+
+    <div class="advice-box" id="adviceResult" style="display:none;">
+        <h3>【あなたへの個別アドバイス・現在地判定】</h3>
+        <p id="adviceText"></p>
+    </div>
+</div>
+
+<script>
+function runSimulation() {
+    let p = parseFloat(document.getElementById('principal').value) * 10000;
+    let r0 = parseFloat(document.getElementById('initialRate').value) / 100 / 12;
+    let n = parseInt(document.getElementById('years').value) * 12;
+    let r1 = parseFloat(document.getElementById('newRate').value) / 100 / 12;
+
+    if (isNaN(p) || isNaN(r0) || isNaN(n) || isNaN(r1)) {
+        alert("正しい数値を入力してください。");
+        return;
+    }
+
+    let initialPmnt = p * r0 * Math.pow(1 + r0, n) / (Math.pow(1 + r0, n) - 1);
+
+    let balance = p;
+    for(let i = 0; i < 60; i++) {
+        let interest = balance * r0;
+        balance -= (initialPmnt - interest);
+    }
+
+    let remainingMonths = n - 60;
+    let truePmnt = balance * r1 * Math.pow(1 + r1, remainingMonths) / (Math.pow(1 + r1, remainingMonths) - 1);
+    let maxCappedPmnt = initialPmnt * 1.25;
+    let actualPmnt = Math.min(truePmnt, maxCappedPmnt);
+
+    document.getElementById('resInitial').innerText = Math.round(initialPmnt).toLocaleString();
+    document.getElementById('resBalance').innerText = Math.round(balance / 10000).toLocaleString();
+    document.getElementById('resTrue').innerText = Math.round(truePmnt).toLocaleString();
+    document.getElementById('resCap').innerText = Math.round(maxCappedPmnt).toLocaleString();
+    document.getElementById('resActual').innerText = Math.round(actualPmnt).toLocaleString();
+
+    let warn = "";
+    if (truePmnt > maxCappedPmnt) {
+        warn = "<span class='alert'>⚠️ 注意：本来必要な返済額が125%の上限を超えています。蓋に守られている間に未払利息や最終回へのしわ寄せが発生するリスクがあります。</span>";
+    } else {
+        warn = "<span class='safe'>ℹ️ 125%のキャップ上限の範囲内に収まっています。ただし元本の減り方は遅くなります。</span>";
+    }
+    document.getElementById('simWarning').innerHTML = warn;
+    document.getElementById('simResult').style.display = 'block';
+}
+
+function runAdvice() {
+    let c1 = document.getElementById('chk1').checked; // 出費の山
+    let c2 = document.getElementById('chk2').checked; // 現金のみ
+    let c3 = document.getElementById('chk3').checked; // 家計余裕なし
+    let c4 = document.getElementById('chk4').checked; // 残債が大きい
+
+    let count = (c1 ? 1 : 0) + (c2 ? 1 : 0) + (c3 ? 1 : 0) + (c4 ? 1 : 0);
+    let text = "";
+
+    if (count >= 3) {
+        text = "<b>🚨 【危険度：高（要積極対策）】</b><br>あなたの状況は、金利上昇とライフイベント（教育・修繕等）の負担が重なるリスクが高い状態です。「5年ルール」の猶予期間を過信せず、今から差額分を別口座へ先取り貯蓄する、またはまとまった繰上返済を検討するなど、能動的な防衛策を打つフェーズにあります。";
+    } else if (count >= 1) {
+        text = "<b>⚠️ 【危険度：中（要モニタリング）】</b><br>一部にリスク要因を抱えています。変動ローンのメリット（低金利の恩恵）を受けつつも、金利がさらに上昇した際のシミュレーションを定期的に行い、いつでも固定金利への切り替えや繰上返済ができるよう準備しておきましょう。";
+    } else {
+        text = "<b>✅ 【危険度：低（現状は比較的安定）】</b><br>現在の家計や資産背景に比較的余裕が見られます。ただし、現金のみの保有はインフレや金利上昇局面で実質目減りするリスクもあるため、収入や資産が金利・物価と同じ方向に動くバランスになっているか定期的に見直すのがベストです。";
+    }
+
+    document.getElementById('adviceText').innerHTML = text;
+    document.getElementById('adviceResult').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
