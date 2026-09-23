@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン＆ライフプラン総合シミュレーター</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター（意思決定・判断支援版）</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -208,6 +208,13 @@
             border-radius: 4px;
             margin-top: 10px;
         }
+        .strategy-box {
+            background: #fdfefe;
+            border: 1px solid #bdc3c7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -216,12 +223,12 @@
     <!-- ヘッダー（ロゴとタイトル） -->
     <div class="header">
         <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
-        <h1>住宅ローン＆ライフプラン総合シミュレーター</h1>
+        <h1>住宅ローン＆ライフプラン総合シミュレーター（意思決定支援版）</h1>
     </div>
 
     <div class="disclaimer-box">
         <strong>【免責事項・前提条件】</strong><br>
-        本シミュレーターは概算による家計の傾向把握を目的としたものであり、正式な金融機関の返済予定表、約款に基づく償却計算、および個別契約の代替となるものではありません。詳細な試算は各金融機関にお問い合わせください。
+        本シミュレーターは概算による家計の傾向把握および意思決定支援を目的としたものであり、正式な金融機関の返済予定表や個別契約の代替となるものではありません。
     </div>
 
     <form id="lifePlanForm">
@@ -269,7 +276,7 @@
         </div>
 
         <div class="form-group">
-            <label for="startPayment">当初の毎月の返済額（万円）</label>
+            <label for="startPayment">当初の毎月の返済額（万円 ※目標額の基準になります）</label>
             <input type="number" step="0.1" id="startPayment" placeholder="10.5" min="0.1">
         </div>
 
@@ -330,31 +337,31 @@
             <div class="child-row"><label style="width:100px; padding-top:10px;">第5子</label><input type="number" id="child5" placeholder="" min="0" max="30"></div>
         </div>
 
-        <!-- セクション5：リスク確認チェックシート（維持・売却・固定切替・オーバーローン対応版） -->
-        <div class="section-title">5. リスク確認・出口戦略チェックシート</div>
+        <!-- セクション5：回答者の意思確認チェックシート -->
+        <div class="section-title">5. 回答者の意思確認・出口戦略チェックシート</div>
         <div class="checkbox-group">
-            <div class="note">※下の「□」をクリックしてチェックしてください。</div>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">金利上昇局面において「固定金利への借り換え」や「繰上返済」のタイミングを検討している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">もし返済が厳しくなった際、「5年・125%ルール適用中の売却」や、売却額がローンを下回る「オーバーローン（追い金発生）」のリスクを認識している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">車の維持費や車検費用を家計予算に組み込んでいる。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">家を長く維持するため、外壁・屋根・水回り等のメンテナンス（150万〜300万円）の積立をしている。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">大学等の教育費ピーク（200万〜600万円超/人）に備えている。</label>
+            <div class="note">※現在の気持ちやご自身の方向性に最も近い項目にチェックを入れてください。</div>
+            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="maintain"><strong>【維持を希望】</strong> 金利が上がっても、固定金利への切替や繰上返済を活用してこの家に住み続けたい。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkIntent" value="sell_limit"><strong>【売却を検討】</strong> 返済額が当初の予算（または許容額）を超えた場合や生活が圧迫された場合は、早めに家を売却することを検討している。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">金利上昇局面において「固定金利への借り換え」や「繰上返済」のタイミングを常に模索している。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">売却時にローン残高が売却額を上回る「オーバーローン（追い金発生）」のリスクを理解している。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">家を長く維持するための修繕費（150万〜300万）や教育費のピークに備えている。</label>
         </div>
 
-        <button type="button" class="btn" onclick="runSimulation()">シミュレーションを実行する</button>
+        <button type="button" class="btn" onclick="runSimulation()">意思決定支援シミュレーションを実行する</button>
     </form>
 
     <!-- 結果表示エリア -->
     <div id="resultBox" class="result-box">
-        <h3>シミュレーション結果レポート</h3>
+        <h3>意思決定支援レポート ＆ パターン別アドバイス</h3>
         
         <div class="result-section">
-            <h4>1. 金利経緯・見直し履歴ごとの利息推移（時系列検証ベース）</h4>
+            <h4>1. 金利経緯・見直し履歴ごとの利息推移</h4>
             <div id="resHistoryTable"></div>
         </div>
 
         <div class="result-section">
-            <h4>2. 【125%ルール・未払利息の定量評価 ＆ 将来金利シナリオ】</h4>
+            <h4>2. 【返済負担の検証 ＆ 当初返済額に戻すための必要繰上返済額】</h4>
             <div id="res125Comparison"></div>
         </div>
 
@@ -364,7 +371,7 @@
         </div>
 
         <div class="result-section">
-            <h4>4. 家の維持・売却（オーバーローン）戦略 ＆ 教育・車のアドバイス</h4>
+            <h4>4. 【意思に沿ったアドバイス】家を「維持する道」vs「売却する道」</h4>
             <div id="resLifePlanAdvice"></div>
         </div>
 
@@ -426,7 +433,7 @@
             let yVal = document.getElementById('year'+i).value;
             let rVal = document.getElementById('rate'+i).value;
             if(yVal !== "" && rVal !== "") {
-                historyData.push({ year: Number(yVal), label: `${i}回目見直し(${yVal}年目)`, rate: Number(rVal) });
+                historyData.push({ year: Number(yVal), label: `${i}回目見直し(${yVal}年目)`, rate: Number(rVal) };)
             }
         }
         historyData.sort((a, b) => a.year - b.year);
@@ -464,72 +471,37 @@
             trueRequiredPayment = monthlyPrincipal + currentMInterest;
         }
 
-        let rPlus1 = (latestRate + 1.0) / 100 / 12;
-        let rPlus2 = (latestRate + 2.0) / 100 / 12;
-        let pmtPlus1 = 0, pmtPlus2 = 0;
-        if (remMonths > 0) {
-            if (rPlus1 > 0) {
-                let f1 = Math.pow(1 + rPlus1, remMonths);
-                pmtPlus1 = estimatedBalance * rPlus1 * f1 / (f1 - 1);
-            } else {
-                pmtPlus1 = estimatedBalance / remMonths;
-            }
-            if (rPlus2 > 0) {
-                let f2 = Math.pow(1 + rPlus2, remMonths);
-                pmtPlus2 = estimatedBalance * rPlus2 * f2 / (f2 - 1);
-            } else {
-                pmtPlus2 = estimatedBalance / remMonths;
-            }
+        // 💡 「当初の毎月の返済額（startPayment）」に現在の残高・金利で収めるための【必要残高の逆算】および【必要繰上返済額】の計算
+        // PMT公式から、指定返済額(startPayment)を達成できる許容元本(TargetBalance)を逆算する
+        let targetBalance = 0;
+        if (rNew > 0) {
+            let factor = Math.pow(1 + rNew, remMonths);
+            targetBalance = startPayment * (factor - 1) / (rNew * factor);
+        } else {
+            targetBalance = startPayment * remMonths;
         }
+
+        let neededPrepayment = estimatedBalance - targetBalance; // 現残高から許容元本を引いた分が、当初返済額に戻すために今すぐ必要な繰上返済額
 
         let currentMonthlyInterest = Math.round(estimatedBalance * (latestRate / 100) / 12);
         let max125Payment = currentMonthlyPayment * 1.25;
 
         let compHtml = `
-            現在の最新適用金利（<strong>${latestRate}%</strong>）、残高（<strong>${(estimatedBalance/10000).toFixed(1)}万円</strong>）、残期間（<strong>${remainingYears}年</strong>）、返済方式（<strong>${repaymentMethod === 'equal_payment' ? '元利均等' : '元金均等'}</strong>）をもとに算出しました。<br><br>
+            現在の最新適用金利（<strong>${latestRate}%</strong>）、残高（<strong>${(estimatedBalance/10000).toFixed(1)}万円</strong>）、残期間（<strong>${remainingYears}年</strong>）をもとに算出しました。<br><br>
             ・<strong>今月の実質利息額:</strong> 約 <strong>${currentMonthlyInterest.toLocaleString()} 円</strong><br>
-            ・<strong>今月の返済額:</strong> <strong>${(currentMonthlyPayment/10000).toFixed(1)} 万円</strong><br>
+            ・<strong>現在の実際の支払額:</strong> <strong>${(currentMonthlyPayment/10000).toFixed(1)} 万円</strong><br>
+            ・<strong>本来必要な支払額（理論値）:</strong> <strong style="color:#c0392b;">${(trueRequiredPayment/10000).toFixed(1)} 万円</strong><br>
+            <hr style="border:0; border-top:1px dashed #ccc; margin:15px 0;">
+            🎯 <strong>【当初の返済額（${(startPayment/10000).toFixed(1)}万円）に月々の支払いを戻すための逆算シミュレーション】</strong><br>
         `;
 
-        if (currentMonthlyInterest >= currentMonthlyPayment) {
-            compHtml += `<div class="alert-danger">🚨 【即時未払利息の危険】現在の月利息（約${currentMonthlyInterest.toLocaleString()}円）が、毎月の返済額（${(currentMonthlyPayment/10000).toFixed(1)}万円）を超えています！今すでに利息が返済額を食いつぶし、未払利息が発生している状態です。</div>`;
+        if (estimatedBalance <= targetBalance) {
+            compHtml += `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✨ 現在の条件でも、月々の負担額はすでに当初の返済額（${(startPayment/10000).toFixed(1)}万円）以下に収まっています！追加の繰上返済は不要です。</div>`;
         } else {
-            compHtml += `<br>`;
-        }
-
-        compHtml += `
-            <table class="sim-table" style="text-align:left;">
-                <tr><th>項目</th><th>金額（月額）</th><th>解説</th></tr>
-                <tr><td><strong>① 現在の支払額</strong></td><td><strong style="color:#2980b9;">${(currentMonthlyPayment/10000).toFixed(1)} 万円</strong></td><td>現在実際に支払っている金額です。</td></tr>
-        `;
-
-        if (repaymentMethod === 'equal_payment' && loanHistoryType !== 'fixed_all' && loanHistoryType !== 'fixed_to_fixed') {
+            let diffPrepay = neededPrepayment / 10000;
             compHtml += `
-                <tr><td><strong>② 約款上の125%上限額</strong></td><td><strong style="color:#d35400;">${(max125Payment/10000).toFixed(1)} 万円</strong></td><td>多くの変動金利（元利均等）の約款上の激変緩和上限額（現行の1.25倍）。</td></tr>
-            `;
-        }
-
-        compHtml += `
-                <tr><td><strong>③ 本来の支払額（理論値）</strong></td><td><strong style="color:#c0392b;">${(trueRequiredPayment/10000).toFixed(1)} 万円</strong></td><td>現在の残高と金利で正確に計算した場合に<strong>本来必要な金額</strong> (${repaymentMethod === 'equal_principal' ? '元金均等の初月' : 'PMT算定'})。</td></tr>
-            </table>
-        `;
-
-        if (loanHistoryType === 'fixed_all' || loanHistoryType === 'fixed_to_fixed' || repaymentMethod === 'equal_principal') {
-            compHtml += `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✨ 固定金利または元金均等のため、変動の125%ルール（約款上の上限規制）の対象外です。</div>`;
-        } else if (trueRequiredPayment > max125Payment) {
-            compHtml += `<div class="alert-danger">⚠️ 【約款上限超えのメカニズム警告】「③ 本来の支払額」が「② 上限額」を超えています。約款上の激変緩和（125%）で返済額が抑えられるため、不足分が未払利息の蓄積や最終回の精算額膨らみに回るリスクがあります。</div>`;
-        } else {
-            compHtml += `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✨ 本来の支払額が上限額の範囲内に収まっています。</div>`;
-        }
-
-        if (repaymentMethod === 'equal_payment') {
-            compHtml += `
-                <br><strong>📈 【将来金利シナリオ試算（元利均等・残期間ベース）】</strong><br>
-                <ul>
-                    <li>現在（${latestRate}%）: <strong>${(currentMonthlyPayment/10000).toFixed(1)} 万円/月</strong></li>
-                    <li>もし金利が <strong>+1.0%</strong>（${(latestRate+1.0).toFixed(2)}%）に上昇した場合の理論返済額: 約 <strong>${(pmtPlus1/10000).toFixed(1)} 万円/月</strong>（差額: +${((pmtPlus1 - currentMonthlyPayment)/10000).toFixed(1)}万円）</li>
-                    <li>もし金利が <strong>+2.0%</strong>（${(latestRate+2.0).toFixed(2)}%）に上昇した場合の理論返済額: 約 <strong>${(pmtPlus2/10000).toFixed(1)} 万円/月</strong>（差額: +${((pmtPlus2 - currentMonthlyPayment)/10000).toFixed(1)}万円）</li>
-                </ul>
+                現在の金利（${latestRate}%）のまま、月々の負担を当初の <strong>${(startPayment/10000).toFixed(1)} 万円</strong> まで下げるためには、今すぐ期間短縮型の繰上返済として約 <strong style="color:#e67e22; font-size:16px;">${diffPrepay.toFixed(1)} 万円</strong>（約 ${Math.round(neededPrepayment).toLocaleString()} 円）の現金投入が必要です。<br>
+                <div class="alert-warning" style="margin-top:10px;">⚠️ ※将来さらに金利が上昇した場合には、この必要繰上額がさらに膨らむ点にご注意ください。</div>
             `;
         }
 
@@ -538,17 +510,17 @@
         if (loanType === 'pair') {
             pairHealthHtml += `・<strong>配偶者の年齢:</strong> ${spouseAge}歳<br>`;
             if (currentAge >= 55 || spouseAge >= 55 || totalFinishAge >= 70) {
-                pairHealthHtml += `<div class="alert-danger">🚨 【ペアローン・年齢リスク】夫婦それぞれが借入を抱えており、役職定年や健康・収入変化に対するリスクが大きくなる時期です。団信のカバー範囲（各自に付帯か）を再確認してください。</div>`;
+                pairHealthHtml += `<div class="alert-danger">🚨 【ペアローン・年齢リスク】夫婦それぞれが借入を抱えており、役職定年や健康・収入変化に対するリスクが大きくなる時期です。団信のカバー範囲を再確認してください。</div>`;
             } else {
                 pairHealthHtml += `<div class="alert-warning">⚠️ ペアローンのため、万が一の就業不能時や収入減への備えをご確認ください。</div>`;
             }
         } else {
             if (totalFinishAge >= 70) {
-                pairHealthHtml += `<div class="alert-danger">⚠️ 完済時年齢が ${totalFinishAge}歳となります。定年退職後（60〜65歳以降）もローン返済が続くため、退職金や貯蓄からの繰上返済計画が必須です。</div>`;
+                pairHealthHtml += `<div class="alert-danger">⚠️ 完済時年齢が ${totalFinishAge}歳となります。定年退職後もローン返済が続くため、退職金や貯蓄からの繰上返済計画が必須です。</div>`;
             } else if (totalFinishAge >= 65) {
-                pairHealthHtml += `<div class="alert-warning">⚠️ 完済時年齢が ${totalFinishAge}歳となります。65歳定年退職の時期と重なるため、退職後のキャッシュフローに十分ご注意ください。</div>`;
+                pairHealthHtml += `<div class="alert-warning">⚠️ 完済時年齢が ${totalFinishAge}歳となります。65歳定年退職の時期と重なるため、退職後のキャッシュフローにご注意ください。</div>`;
             } else {
-                pairHealthHtml += `<div style="color:#27ae60; font-weight:bold;">✨ 65歳未満で完済予定の堅実なスケジュールです。</div>`;
+                pairHealthHtml += `<div style="color:#27ae60; font-weight:bold;">✨ 65歳未満で完済予定のスケジュールです。</div>`;
             }
         }
 
@@ -558,27 +530,47 @@
             if(kInput && kInput.value !== "") kids.push(Number(kInput.value));
         }
 
-        // 維持・売却・オーバーローンに関するアドバイス強化
-        let lifePlanAdviceHtml = `
-            🏠 <strong>住まいの維持コストと売却（出口戦略）アドバイス:</strong><br>
-            ・<strong>修繕コスト（築 ${buildingAge}年）:</strong> ${buildingAge >= 15 ? '築15〜20年以上経過しているため、外壁・屋根塗装や水回り等の<strong>大規模修繕（約 150万〜300万円）</strong>の時期です。' : '将来の修繕（約 100万〜200万円）に向けて毎月の積立を推奨します。'}<br>
-            ・<strong>売却時のオーバーローン（追い金）リスク:</strong> 金利上昇や返済負担の限界から「家を手放して売却したい」と考えた場合、<strong>売却査定額が現在のローン残高（約 ${(estimatedBalance/10000).toFixed(1)}万円）を下回る「オーバーローン状態」</strong>に陥っていると、売却時に手元から現金（追い金）を持ち出さなければ家を売れない事態が発生します。<br>
-            ・<strong>固定への切替・繰上返済の検討:</strong> 変動金利の上昇リスクに耐えられないと判断した場合は、負担が急増する前の「固定金利への借り換え」や、元本を減らす「繰上返済」の検討が防衛策となります。<br>
-        `;
+        // 回答者の意思（チェックボックス）の取得
+        const intentMaintain = document.querySelector('input[name="checkIntent"][value="maintain"]').checked;
+        const intentSell = document.querySelector('input[name="checkIntent"][value="sell_limit"]').checked;
+
+        let lifePlanAdviceHtml = `🏠 <strong>回答者の意思に沿ったパターン別アドバイス:</strong><br>`;
+
+        if (intentMaintain && !intentSell) {
+            lifePlanAdviceHtml += `
+                <div class="strategy-box" style="border-left: 4px solid #27ae60; background:#f0f9f4;">
+                    <h4 style="color:#276749; margin-top:0;">🟢 【パターンA：家を維持する道（固定切替 ＆ 繰上返済）を選択された場合】</h4>
+                    ・<strong>今後の金利上昇への防衛策:</strong> さらなる金利上昇リスク（今後＋1%〜＋2%）に備え、負担耐性が限界に達する前に<strong>「固定金利への借り換え」</strong>を検討しましょう。<br>
+                    ・<strong>キャッシュ防衛:</strong> 月々の支払いを当初額に近づけるために、上記で算出した<strong>繰上返済（必要額: 約 ${Math.round(neededPrepayment > 0 ? neededPrepayment : 0).toLocaleString()} 円）</strong>を計画的に実行し、元本をスリム化することが有効です。<br>
+                    ・<strong>維持コストの確保:</strong> 築 ${buildingAge}年。外壁・屋根・水回り修繕（約 150万〜300万円）の積立をローン返済と並行して維持してください。
+                </div>
+            `;
+        } else if (intentSell && !intentMaintain) {
+            lifePlanAdviceHtml += `
+                <div class="strategy-box" style="border-left: 4px solid #e67e22; background:#fef9e7;">
+                    <h4 style="color:#b9770e; margin-top:0;">🟠 【パターンB：売却（出口戦略）を視野に入れられている場合】</h4>
+                    ・<strong>オーバーローン（追い金）の厳重警戒:</strong> もし家を手放す場合、現在のローン残高（<strong>${(estimatedBalance/10000).toFixed(1)} 万円</strong>）に対し、地域の不動産査定額が下回っていると、売却時に手元から現金（追い金）を払う必要があります。<br>
+                    ・<strong>売却判断のタイミング:</strong> 5年ルールや125%ルールで月々の返済額が跳ね上がる前、あるいは貯蓄が削られて身動きが取れなくなる前に、早めに不動産会社へ簡易査定を依頼し「売却した場合に手元に現金が残るか、マイナスになるか」を把握することが最優先です。<br>
+                    ・<strong>精神的・家計的負担の軽減:</strong> 無理に維持して破綻するよりも、身の丈に合った住まいへ買い替える（リセットする）ことは非常に合理的な選択肢になり得ます。
+                </div>
+            `;
+        } else {
+            lifePlanAdviceHtml += `
+                <div class="strategy-box" style="border-left: 4px solid #2980b9; background:#eef9ff;">
+                    <h4 style="color:#1b4f72; margin-top:0;">🔵 【総合的なアドバイス（維持 or 売却の分岐点）】</h4>
+                    ・<strong>現状の評価:</strong> 現在の金利環境と残高を踏まえ、「このまま固定金利への切替や繰上返済で耐え抜くか（維持）」、あるいは「傷が浅いうちに売却して家計をスリム化するか（売却）」の岐路に立っています。<br>
+                    ・上記で算出した<strong>「当初返済額に戻すための必要繰上返済額（約 ${Math.round(neededPrepayment > 0 ? neededPrepayment : 0).toLocaleString()} 円）」</strong>をご自身の貯蓄状況と照らし合わせ、一括返済の余力があるかを確認してください。余力がない場合は、売却査定を一度行ってみることをお勧めします。
+                </div>
+            `;
+        }
 
         if (kids.length > 0) {
-            lifePlanAdviceHtml += `<br>🎓 <strong>お子様の教育費ピーク:</strong> お子様の年齢（${kids.join('歳, ')}歳）の進学時期（1人あたり約 200万〜600万円超）とローンの負担が重なります。<br>`;
+            lifePlanAdviceHtml += `<br>🎓 <strong>お子様の教育費ピーク（${kids.join('歳, ')}歳）</strong>と修繕費（約 150万〜300万円）、車の買い替えが重なる時期のキャッシュフローにも十分ご注意ください。`;
         }
 
-        lifePlanAdviceHtml += `<br>🚗 <strong>車の維持費:</strong> 車検や買い替え（約 150万〜300万円）も考慮し、目的別に口座を分けて管理しましょう。`;
-
-        const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked').length;
-        let checkSummaryHtml = `チェック項目（5項目中）: <strong>${checkedCount}項目</strong>クリア。<br>`;
-        if (checkedCount === 5) {
-            checkSummaryHtml += `✨ 素晴らしいリスク管理です！`;
-        } else {
-            checkSummaryHtml += `⚠️ 固定金利への切替、売却時のオーバーローンリスク、修繕・教育費の重なりに備えた資金計画の再点検をお勧めします。`;
-        }
+        const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked, input[name="checkIntent"]:checked').length;
+        let checkSummaryHtml = `チェック項目（意思確認含む）: <strong>${checkedCount}項目</strong>クリア。<br>`;
+        checkSummaryHtml += `✨ ご自身の意思とリスクが整理されました。上記のシミュレーション結果とパターン別アドバイスを判断材料にお役立てください。`;
 
         document.getElementById('resHistoryTable').innerHTML = tableHtml;
         document.getElementById('res125Comparison').innerHTML = compHtml;
