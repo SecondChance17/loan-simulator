@@ -57,7 +57,11 @@
         .note {
             font-size: 13px;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            background: #fff3cd;
+            padding: 8px 12px;
+            border-left: 4px solid #ffc107;
+            border-radius: 2px;
         }
         input[type="number"], select {
             width: 100%;
@@ -75,18 +79,22 @@
             padding: 15px;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
+            margin-bottom: 15px;
         }
         .checkbox-label {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             font-weight: normal;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             cursor: pointer;
+            line-height: 1.5;
         }
         .checkbox-label input[type="checkbox"] {
+            margin-top: 3px;
             margin-right: 10px;
             width: 18px;
             height: 18px;
+            flex-shrink: 0;
         }
         .btn {
             background-color: #0056b3;
@@ -133,39 +141,48 @@
         
         <div class="form-group">
             <label for="currentBalance">現在のローン残高</label>
-            <input type="number" id="currentBalance" placeholder="例：現在のローン残高を入力してください">
+            <input type="number" id="currentBalance" placeholder="例：現在のローン残高を入力してください（例：30000000）">
         </div>
 
         <div class="form-group">
             <label for="remainingYears">残り返済期間（年）</label>
-            <input type="number" id="remainingYears" placeholder="例：残り年数を入力してください">
+            <input type="number" id="remainingYears" placeholder="例：残り年数を入力してください（例：25）">
         </div>
 
         <div class="form-group">
             <label for="currentRate">現在の適用金利（％）</label>
-            <input type="number" step="0.01" id="currentRate" placeholder="例：0.5">
+            <input type="number" step="0.01" id="currentRate" placeholder="例：現在の金利を入力してください（例：0.5）">
         </div>
 
-        <!-- セクション2：チェックシート -->
-        <div class="section-title">2. 変動権利・状況チェック</div>
-        <div class="form-group checkbox-group">
-            <p class="note">※下の「□」をクリックして、当てはまる項目にチェックしてください。</p>
+        <!-- セクション2：変動金利・リスクに関するチェックシート -->
+        <div class="section-title">2. 変動金利の理解度・リスク許容度チェック</div>
+        
+        <div class="checkbox-group">
+            <div class="note">※下の「□」をクリックして、ご自身の状況に当てはまる項目すべてにチェックしてください。</div>
             
             <label class="checkbox-label">
-                <input type="checkbox" name="checkItem"> 金利上昇リスクについての説明を受けたことがある
+                <input type="checkbox" name="checkItem">
+                <span>金利が上昇した際、毎月の返済額が増えるリスク（金利上昇リスク）について十分に理解している。</span>
             </label>
             <label class="checkbox-label">
-                <input type="checkbox" name="checkItem"> 5年ルールや125%ルールについて理解している
+                <input type="checkbox" name="checkItem">
+                <span>変動金利には「5年ルール（5年間は返済額が変わらない）」や「125%ルール（見直し時の値上げは最大1.25倍まで）」があることを知っている。</span>
             </label>
             <label class="checkbox-label">
-                <input type="checkbox" name="checkItem"> 金利が1%上がっても家計に余裕がある
+                <input type="checkbox" name="checkItem">
+                <span>もし将来的に金利が1%〜2%程度上昇したとしても、家計の貯蓄や収入から十分に耐えられる余裕がある。</span>
             </label>
             <label class="checkbox-label">
-                <input type="checkbox" name="checkItem"> 固定金利への借り換えを検討したことがある
+                <input type="checkbox" name="checkItem">
+                <span>金利上昇の兆候が見えた際、固定金利への借り換えや繰上返済を行うための資金計画・心積もりがある。</span>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="checkItem">
+                <span>住宅ローン控除（減税）の期間や、自身のライフプラン（教育費のピークなど）を把握した上でローンを組んでいる。</span>
             </label>
         </div>
 
-        <button type="button" class="btn" onclick="calculateLoan()">診断・計算する</button>
+        <button type="button" class="btn" onclick="calculateLoan()">診断・計算を実行する</button>
     </form>
 
     <!-- 結果表示エリア -->
@@ -185,15 +202,32 @@
         const resultText = document.getElementById('resultText');
 
         if(!balance || !years || !rate) {
-            alert('すべての項目を入力してください。');
+            alert('ローン情報（残高・残り期間・金利）をすべて入力してください。');
             return;
         }
 
-        // 簡単な簡易計算・表示の例
+        // チェックされた個数をカウント
+        const checkboxes = document.querySelectorAll('input[name="checkItem"]:checked');
+        const checkCount = checkboxes.length;
+
+        // 簡単な簡易判定メッセージ
+        let advice = "";
+        if (checkCount >= 4) {
+            advice = "リスクに対する備えやご理解がしっかりできています。引き続き定期的な見直しをおすすめします。";
+        } else if (checkCount >= 2) {
+            advice = "おおむね問題ありませんが、金利上昇時の家計シミュレーションを一度詳しく行っておくとより安心です。";
+        } else {
+            advice = "変動金利の仕組みやリスクについて、一度しっかりと見直しや専門家への相談を検討されることをおすすめします。";
+        }
+
+        // 結果を表示
         resultBox.style.display = 'block';
-        resultText.innerHTML = `ご入力ありがとうございます。<br>
-        残高: <strong>${Number(balance).toLocaleString()}円</strong> / 残り期間: <strong>${years}年</strong> / 金利: <strong>${rate}%</strong><br>
-        現在の状況をもとに、変動金利の見直しやリスク対策を検討することをお勧めします。`;
+        resultText.innerHTML = `
+            ご入力ありがとうございます。<br>
+            【入力内容】残高: <strong>${Number(balance).toLocaleString()}円</strong> / 残り期間: <strong>${years}年</strong> / 金利: <strong>${rate}%</strong><br>
+            【チェックシート結果】5項目中 <strong>${checkCount}項目</strong> にチェックが入りました。<br><br>
+            <strong>【アドバイス】</strong><br>${advice}
+        `;
     }
 </script>
 
