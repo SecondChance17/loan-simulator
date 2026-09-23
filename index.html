@@ -279,9 +279,9 @@
         </div>
 
         <div class="form-group">
-            <label for="loanHistoryType">金利タイプの経緯</label>
+            <label for="loanHistoryType">金利タイプの経緯・検討状況</label>
             <select id="loanHistoryType">
-                <option value="variable_always">当初から変動金利</option>
+                <option value="variable_always">当初から変動金利（固定への切替も検討中）</option>
                 <option value="fixed_to_variable">当初は固定だが途中で変動へ切替/借換</option>
                 <option value="fixed_to_fixed">固定から固定へ借り換え</option>
                 <option value="fixed_all">全期間固定金利</option>
@@ -303,21 +303,21 @@
             <input type="number" id="remainingYears" placeholder="15" min="1" max="50">
         </div>
 
-        <!-- セクション3：金利変更履歴（最大10回分：時系列順） -->
-        <div class="section-title">3. 金利見直し・切替履歴（最大10回分・古い順に入力）</div>
-        <p class="note">※契約から最初の見直し（1回目）、2回目の見直し……と、古い順に「見直し時期（経過年数）」と「見直し後金利（％）」を入力してください。</p>
+        <!-- セクション3：金利変更履歴（最大10回分：経過年数＋金利） -->
+        <div class="section-title">3. 金利見直し・切替履歴（最大10回分）</div>
+        <p class="note">※「見直し時期（経過年数）」と「見直し後金利（％）」を入力してください（該当しない回は空欄）。</p>
         
         <div class="sub-group">
-            <div class="rate-history-row"><label>1回目見直し</label><input type="number" id="year1" placeholder="経過年(例:5)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate1" placeholder="金利(%):1.2" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>2回目見直し</label><input type="number" id="year2" placeholder="経過年(例:10)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate2" placeholder="金利(%):1.0" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>3回目見直し</label><input type="number" id="year3" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate3" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>4回目見直し</label><input type="number" id="year4" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate4" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>5回目見直し</label><input type="number" id="year5" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate5" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>6回目見直し</label><input type="number" id="year6" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate6" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>7回目見直し</label><input type="number" id="year7" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate7" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>8回目見直し</label><input type="number" id="year8" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate8" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>9回目見直し</label><input type="number" id="year9" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate9" placeholder="金利(%)" style="flex:1;" min="0"></div>
-            <div class="rate-history-row"><label>10回目見直し</label><input type="number" id="year10" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate10" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>1回目</label><input type="number" id="year1" placeholder="経過年(例:5)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate1" placeholder="金利(%):1.2" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>2回目</label><input type="number" id="year2" placeholder="経過年(例:10)" style="flex:1;" min="1"><input type="number" step="0.01" id="rate2" placeholder="金利(%):1.0" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>3回目</label><input type="number" id="year3" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate3" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>4回目</label><input type="number" id="year4" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate4" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>5回目</label><input type="number" id="year5" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate5" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>6回目</label><input type="number" id="year6" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate6" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>7回目</label><input type="number" id="year7" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate7" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>8回目</label><input type="number" id="year8" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate8" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>9回目</label><input type="number" id="year9" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate9" placeholder="金利(%)" style="flex:1;" min="0"></div>
+            <div class="rate-history-row"><label>10回目</label><input type="number" id="year10" placeholder="経過年" style="flex:1;" min="1"><input type="number" step="0.01" id="rate10" placeholder="金利(%)" style="flex:1;" min="0"></div>
         </div>
 
         <!-- セクション4：お子様の年齢（最大5名） -->
@@ -330,14 +330,14 @@
             <div class="child-row"><label style="width:100px; padding-top:10px;">第5子</label><input type="number" id="child5" placeholder="" min="0" max="30"></div>
         </div>
 
-        <!-- セクション5：チェックシート -->
-        <div class="section-title">5. リスク確認チェックシート</div>
+        <!-- セクション5：リスク確認チェックシート（維持・売却・固定切替・オーバーローン対応版） -->
+        <div class="section-title">5. リスク確認・出口戦略チェックシート</div>
         <div class="checkbox-group">
             <div class="note">※下の「□」をクリックしてチェックしてください。</div>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">金利変動や切替に伴う利息・元本バランスの変化を把握している。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">変動金利における約款上の125%ルールや未払利息のリスクを理解している。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">金利上昇局面において「固定金利への借り換え」や「繰上返済」のタイミングを検討している。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">もし返済が厳しくなった際、「5年・125%ルール適用中の売却」や、売却額がローンを下回る「オーバーローン（追い金発生）」のリスクを認識している。</label>
             <label class="checkbox-label"><input type="checkbox" name="checkItem">車の維持費や車検費用を家計予算に組み込んでいる。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">築年数に応じた大規模修繕（150万〜300万円規模）の積立をしている。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">家を長く維持するため、外壁・屋根・水回り等のメンテナンス（150万〜300万円）の積立をしている。</label>
             <label class="checkbox-label"><input type="checkbox" name="checkItem">大学等の教育費ピーク（200万〜600万円超/人）に備えている。</label>
         </div>
 
@@ -364,7 +364,7 @@
         </div>
 
         <div class="result-section">
-            <h4>4. 修繕・教育費・車維持のリアルな金額試算アドバイス</h4>
+            <h4>4. 家の維持・売却（オーバーローン）戦略 ＆ 教育・車のアドバイス</h4>
             <div id="resLifePlanAdvice"></div>
         </div>
 
@@ -419,7 +419,6 @@
             return;
         }
 
-        // 金利見直し履歴の収集（当初を起点として時系列順に正しく並べる）
         let historyData = [];
         historyData.push({ year: 0, label: "当初契約時", rate: startRate });
 
@@ -430,10 +429,8 @@
                 historyData.push({ year: Number(yVal), label: `${i}回目見直し(${yVal}年目)`, rate: Number(rVal) });
             }
         }
-        // 経過年数が若い順（時系列順）に確実にソート
         historyData.sort((a, b) => a.year - b.year);
 
-        // 履歴テーブル作成（時系列の期間ごとの利息推移）
         let tableHtml = `<table class="sim-table"><tr><th>タイミング</th><th>適用金利</th><th>推定月利息分（概算）</th></tr>`;
         let approxBal = startAmount;
         let currentRunPayment = startPayment;
@@ -449,7 +446,6 @@
         });
         tableHtml += `</table>`;
 
-        // 最新の適用金利は時系列の最後の要素から取得
         let latestRate = historyData[historyData.length - 1].rate;
         let remMonths = remainingYears * 12;
         let rNew = latestRate / 100 / 12;
@@ -468,7 +464,6 @@
             trueRequiredPayment = monthlyPrincipal + currentMInterest;
         }
 
-        // 将来金利シナリオ（＋1% / ＋2%）
         let rPlus1 = (latestRate + 1.0) / 100 / 12;
         let rPlus2 = (latestRate + 2.0) / 100 / 12;
         let pmtPlus1 = 0, pmtPlus2 = 0;
@@ -563,27 +558,26 @@
             if(kInput && kInput.value !== "") kids.push(Number(kInput.value));
         }
 
-        let lifePlanAdviceHtml = `🏠 <strong>住まいの修繕コスト（築 ${buildingAge}年）:</strong><br>`;
-        if (buildingAge >= 15) {
-            lifePlanAdviceHtml += `築15〜20年以上経過しているため、外壁・屋根塗装や給湯器・水回り交換などの<strong>大規模修繕（目安：約 150万〜300万円）</strong>が重なりやすい時期です。計画的な積立が不可欠です。<br>`;
-        } else {
-            lifePlanAdviceHtml += `将来の修繕（10年ごとのメンテナンス、約100万〜200万円）に向けて毎月の積立を始めておきましょう。<br>`;
-        }
+        // 維持・売却・オーバーローンに関するアドバイス強化
+        let lifePlanAdviceHtml = `
+            🏠 <strong>住まいの維持コストと売却（出口戦略）アドバイス:</strong><br>
+            ・<strong>修繕コスト（築 ${buildingAge}年）:</strong> ${buildingAge >= 15 ? '築15〜20年以上経過しているため、外壁・屋根塗装や水回り等の<strong>大規模修繕（約 150万〜300万円）</strong>の時期です。' : '将来の修繕（約 100万〜200万円）に向けて毎月の積立を推奨します。'}<br>
+            ・<strong>売却時のオーバーローン（追い金）リスク:</strong> 金利上昇や返済負担の限界から「家を手放して売却したい」と考えた場合、<strong>売却査定額が現在のローン残高（約 ${(estimatedBalance/10000).toFixed(1)}万円）を下回る「オーバーローン状態」</strong>に陥っていると、売却時に手元から現金（追い金）を持ち出さなければ家を売れない事態が発生します。<br>
+            ・<strong>固定への切替・繰上返済の検討:</strong> 変動金利の上昇リスクに耐えられないと判断した場合は、負担が急増する前の「固定金利への借り換え」や、元本を減らす「繰上返済」の検討が防衛策となります。<br>
+        `;
 
         if (kids.length > 0) {
-            lifePlanAdviceHtml += `<br>🎓 <strong>お子様の教育費ピーク試算:</strong><br>
-            お子様の年齢: ${kids.join('歳, ')}歳。<br>
-            高校・大学進学が重なる時期は、<strong>1人あたり約 200万（国公立）〜600万円超（私立理系・下宿含む場合は1,000万円近く）</strong>の学費が必要です。ローンの負担増と重なる時期のキャッシュフローにご注意ください。<br>`;
+            lifePlanAdviceHtml += `<br>🎓 <strong>お子様の教育費ピーク:</strong> お子様の年齢（${kids.join('歳, ')}歳）の進学時期（1人あたり約 200万〜600万円超）とローンの負担が重なります。<br>`;
         }
 
-        lifePlanAdviceHtml += `<br>🚗 <strong>車の維持・車検:</strong> 車検、自動車税、数年ごとの買い替え（150万〜300万円）は定期的な大支出です。「目的別口座」での管理をお勧めします。`;
+        lifePlanAdviceHtml += `<br>🚗 <strong>車の維持費:</strong> 車検や買い替え（約 150万〜300万円）も考慮し、目的別に口座を分けて管理しましょう。`;
 
         const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked').length;
         let checkSummaryHtml = `チェック項目（5項目中）: <strong>${checkedCount}項目</strong>クリア。<br>`;
         if (checkedCount === 5) {
             checkSummaryHtml += `✨ 素晴らしいリスク管理です！`;
         } else {
-            checkSummaryHtml += `⚠️ 金利変動リスク、修繕費、教育費の重なりに備えた具体的な資金計画の再点検をお勧めします。`;
+            checkSummaryHtml += `⚠️ 固定金利への切替、売却時のオーバーローンリスク、修繕・教育費の重なりに備えた資金計画の再点検をお勧めします。`;
         }
 
         document.getElementById('resHistoryTable').innerHTML = tableHtml;
