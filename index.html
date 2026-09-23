@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住宅ローン＆ライフプラン総合シミュレーター（プロフェッショナル検証版）</title>
+    <title>住宅ローン＆ライフプラン総合シミュレーター（プロ検証対応・完全版）</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -216,7 +216,7 @@
     <!-- ヘッダー（ロゴとタイトル） -->
     <div class="header">
         <img src="logo.jpg" alt="ロゴ" onerror="this.style.display='none'">
-        <h1>住宅ローン＆ライフプラン総合シミュレーター（検証・高精度版）</h1>
+        <h1>住宅ローン＆ライフプラン総合シミュレーター（プロ検証対応版）</h1>
     </div>
 
     <div class="disclaimer-box">
@@ -338,23 +338,23 @@
             <label class="checkbox-label"><input type="checkbox" name="checkItem">変動金利における約款上の125%ルールや未払利息のリスクを理解している。</label>
             <label class="checkbox-label"><input type="checkbox" name="checkItem">車の維持費や車検費用を家計予算に組み込んでいる。</label>
             <label class="checkbox-label"><input type="checkbox" name="checkItem">築年数に応じた大規模修繕（150万〜300万円規模）の積立をしている。</label>
-            <label class="checkbox-label"><input type="checkbox" name="checkItem">大学等の教育費ピーク（数百万〜1,000万円超）に備えている。</label>
+            <label class="checkbox-label"><input type="checkbox" name="checkItem">大学等の教育費ピーク（200万〜600万円超/人）に備えている。</label>
         </div>
 
-        <button type="button" class="btn" onclick="runProfessionalSimulation()">高精度シミュレーションを実行する</button>
+        <button type="button" class="btn" onclick="runProfessionalSimulation()">プロ検証版シミュレーションを実行する</button>
     </form>
 
     <!-- 結果表示エリア -->
     <div id="resultBox" class="result-box">
-        <h3>高精度シミュレーション結果レポート</h3>
+        <h3>プロ検証版シミュレーション結果レポート</h3>
         
         <div class="result-section">
-            <h4>1. 金利経緯・見直し履歴ごとの利息推移（PMT検証ベース）</h4>
+            <h4>1. 金利経緯・見直し履歴ごとの利息推移（期間償却概算ベース）</h4>
             <div id="resHistoryTable"></div>
         </div>
 
         <div class="result-section">
-            <h4>2. 【125%ルール・未払利息の定量評価】現在 vs 上限 vs 本来の支払額</h4>
+            <h4>2. 【125%ルール・未払利息の定量評価 ＆ 将来金利シナリオ】</h4>
             <div id="res125Comparison"></div>
         </div>
 
@@ -382,7 +382,6 @@
     }
 
     function runProfessionalSimulation() {
-        // バリデーション：0や空欄を厳密にチェック（=== "" で判定）
         const loanType = document.getElementById('loanType').value;
         const currentAgeStr = document.getElementById('currentAge').value;
         const buildingAgeStr = document.getElementById('buildingAge').value;
@@ -394,7 +393,7 @@
         const remainingYearsStr = document.getElementById('remainingYears').value;
 
         if (currentAgeStr === "" || buildingAgeStr === "" || startAmountStr === "" || startPaymentStr === "" || startRateStr === "" || currentMonthlyPaymentStr === "" || estimatedBalanceStr === "" || remainingYearsStr === "") {
-            alert('必須項目に未入力の箇所があります。すべて入力してください（築0年や金利0%も入力可能です）。');
+            alert('必須項目に未入力の箇所があります。すべて入力してください。');
             return;
         }
 
@@ -410,13 +409,11 @@
         const estimatedBalance = Number(estimatedBalanceStr) * 10000;
         const remainingYears = Number(remainingYearsStr);
 
-        // 負数チェック
         if (startAmount < 0 || startPayment < 0 || startRate < 0 || currentMonthlyPayment < 0 || estimatedBalance < 0 || remainingYears < 0) {
             alert('金額や年数にマイナスの値は入力できません。');
             return;
         }
 
-        // ペアローン選択時の配偶者年齢チェック
         if (loanType === 'pair' && document.getElementById('spouseAge').value === "") {
             alert('ペアローンを選択された場合は、配偶者の現在の年齢を入力してください。');
             return;
@@ -433,42 +430,69 @@
                 historyData.push({ year: Number(yVal), label: `${i}回目見直し(${yVal}年目)`, rate: Number(rVal) });
             }
         }
-
-        // 履歴を年数順にソート
         historyData.sort((a, b) => a.year - b.year);
 
-        // 履歴テーブル作成
+        // 履歴テーブル作成（期間に応じた償却概算）
         let tableHtml = `<table class="sim-table"><tr><th>タイミング</th><th>適用金利</th><th>推定月利息分（概算）</th></tr>`;
         let approxBal = startAmount;
+        let currentRunPayment = startPayment;
+
         historyData.forEach((item, index) => {
             let mInterest = Math.round(approxBal * (item.rate / 100) / 12);
             tableHtml += `<tr><td><strong>${item.label}</strong></td><td>${item.rate}%</td><td style="color:#c0392b;">約 ${mInterest.toLocaleString()} 円</td></tr>`;
             if (index < historyData.length - 1) {
                 let dur = historyData[index + 1].year - item.year;
-                approxBal -= (startPayment - mInterest) * (dur * 12);
+                approxBal -= (currentRunPayment - mInterest) * (dur * 12);
                 if(approxBal < estimatedBalance) approxBal = estimatedBalance;
             }
         });
         tableHtml += `</table>`;
 
-        // 本来の月返済額のPMT計算
+        // 返済方式に応じた「本来の月返済額」の計算
         let latestRate = historyData[historyData.length - 1].rate;
         let remMonths = remainingYears * 12;
         let rNew = latestRate / 100 / 12;
         let trueRequiredPayment = 0;
-        if(rNew > 0) {
-            let factor = Math.pow(1 + rNew, remMonths);
-            trueRequiredPayment = estimatedBalance * rNew * factor / (factor - 1);
+
+        if (repaymentMethod === 'equal_payment') {
+            // 元利均等 PMT
+            if(rNew > 0) {
+                let factor = Math.pow(1 + rNew, remMonths);
+                trueRequiredPayment = estimatedBalance * rNew * factor / (factor - 1);
+            } else {
+                trueRequiredPayment = estimatedBalance / remMonths;
+            }
         } else {
-            trueRequiredPayment = estimatedBalance / remMonths;
+            // 元金均等 初月 = (残高 / 残月数) + 今月の利息
+            let monthlyPrincipal = estimatedBalance / remMonths;
+            let currentMInterest = estimatedBalance * rNew;
+            trueRequiredPayment = monthlyPrincipal + currentMInterest;
         }
 
-        // 現在の月利息
+        // 将来金利シナリオ（＋1% / ＋2% のPMT試算：元利均等の場合）
+        let rPlus1 = (latestRate + 1.0) / 100 / 12;
+        let rPlus2 = (latestRate + 2.0) / 100 / 12;
+        let pmtPlus1 = 0, pmtPlus2 = 0;
+        if (remMonths > 0) {
+            if (rPlus1 > 0) {
+                let f1 = Math.pow(1 + rPlus1, remMonths);
+                pmtPlus1 = estimatedBalance * rPlus1 * f1 / (f1 - 1);
+            } else {
+                pmtPlus1 = estimatedBalance / remMonths;
+            }
+            if (rPlus2 > 0) {
+                let f2 = Math.pow(1 + rPlus2, remMonths);
+                pmtPlus2 = estimatedBalance * rPlus2 * f2 / (f2 - 1);
+            } else {
+                pmtPlus2 = estimatedBalance / remMonths;
+            }
+        }
+
         let currentMonthlyInterest = Math.round(estimatedBalance * (latestRate / 100) / 12);
         let max125Payment = currentMonthlyPayment * 1.25;
 
         let compHtml = `
-            現在の適用金利（<strong>${latestRate}%</strong>）、残高（<strong>${(estimatedBalance/10000).toFixed(1)}万円</strong>）、残期間（<strong>${remainingYears}年</strong>）をもとに正確なPMT公式で算出しました。<br><br>
+            現在の適用金利（<strong>${latestRate}%</strong>）、残高（<strong>${(estimatedBalance/10000).toFixed(1)}万円</strong>）、残期間（<strong>${remainingYears}年</strong>）、返済方式（<strong>${repaymentMethod === 'equal_payment' ? '元利均等' : '元金均等'}</strong>）をもとに算出しました。<br><br>
             ・<strong>今月の実質利息額:</strong> 約 <strong>${currentMonthlyInterest.toLocaleString()} 円</strong><br>
             ・<strong>今月の返済額:</strong> <strong>${(currentMonthlyPayment/10000).toFixed(1)} 万円</strong><br>
         `;
@@ -483,46 +507,67 @@
             <table class="sim-table" style="text-align:left;">
                 <tr><th>項目</th><th>金額（月額）</th><th>解説</th></tr>
                 <tr><td><strong>① 現在の支払額</strong></td><td><strong style="color:#2980b9;">${(currentMonthlyPayment/10000).toFixed(1)} 万円</strong></td><td>現在実際に支払っている金額です。</td></tr>
-                <tr><td><strong>② 約款上の125%上限額</strong></td><td><strong style="color:#d35400;">${(max125Payment/10000).toFixed(1)} 万円</strong></td><td>多くの銀行の変動金利（元利均等）の約款上の激変緩和上限額（現行の1.25倍）。</td></tr>
-                <tr><td><strong>③ 本来の支払額（PMT算出）</strong></td><td><strong style="color:#c0392b;">${(trueRequiredPayment/10000).toFixed(1)} 万円</strong></td><td>現在の残高と金利で正確に計算した場合に<strong>本当は支払うべき金額</strong>です。</td></tr>
+        `;
+
+        if (repaymentMethod === 'equal_payment' && loanHistoryType !== 'fixed_all' && loanHistoryType !== 'fixed_to_fixed') {
+            compHtml += `
+                <tr><td><strong>② 約款上の125%上限額</strong></td><td><strong style="color:#d35400;">${(max125Payment/10000).toFixed(1)} 万円</strong></td><td>多くの変動金利（元利均等）の約款上の激変緩和上限額（現行の1.25倍）。</td></tr>
+            `;
+        }
+
+        compHtml += `
+                <tr><td><strong>③ 本来の支払額（理論値）</strong></td><td><strong style="color:#c0392b;">${(trueRequiredPayment/10000).toFixed(1)} 万円</strong></td><td>現在の残高と金利で正確に計算した場合に<strong>本来必要な金額</strong> (${repaymentMethod === 'equal_principal' ? '元金均等の初月' : 'PMT算定'})。</td></tr>
             </table>
         `;
 
-        if (loanHistoryType === 'fixed_all' || loanHistoryType === 'fixed_to_fixed') {
-            compHtml += `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✨ 固定金利のため、約款上の125%ルールや変動リスクはありません。</div>`;
+        if (loanHistoryType === 'fixed_all' || loanHistoryType === 'fixed_to_fixed' || repaymentMethod === 'equal_principal') {
+            compHtml += `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✨ 固定金利または元金均等のため、変動の125%ルール（約款上の上限規制）の対象外です。</div>`;
         } else if (trueRequiredPayment > max125Payment) {
-            compHtml += `<div class="alert-danger">⚠️ 【約款上限超え】「③ 本来の支払額」が「② 上限額」を超えています。見直し時に未払利息の精算や激変緩和の対象外となるリスクに注意が必要です（※銀行や返済方式により異なります）。</div>`;
+            compHtml += `<div class="alert-danger">⚠️ 【約款上限超えのメカニズム警告】「③ 本来の支払額」が「② 上限額」を超えています。約款上の激変緩和（125%）で返済額が抑えられるため、不足分が未払利息の蓄積や最終回の精算額膨らみに回るリスクがあります。</div>`;
         } else {
             compHtml += `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✨ 本来の支払額が上限額の範囲内に収まっています。</div>`;
         }
 
+        // 将来金利シナリオの表示
+        if (repaymentMethod === 'equal_payment') {
+            compHtml += `
+                <br><strong>📈 【将来金利シナリオ試算（元利均等・残期間ベース）】</strong><br>
+                <ul>
+                    <li>現在（${latestRate}%）: <strong>${(currentMonthlyPayment/10000).toFixed(1)} 万円/月</strong>（※現在の設定額）</li>
+                    <li>もし金利が <strong>+1.0%</strong>（${(latestRate+1.0).toFixed(2)}%）に上昇した場合の理論返済額: 約 <strong>${(pmtPlus1/10000).toFixed(1)} 万円/月</strong>（差額: +${((pmtPlus1 - currentMonthlyPayment)/10000).toFixed(1)}万円）</li>
+                    <li>もし金利が <strong>+2.0%</strong>（${(latestRate+2.0).toFixed(2)}%）に上昇した場合の理論返済額: 約 <strong>${(pmtPlus2/10000).toFixed(1)} 万円/月</strong>（差額: +${((pmtPlus2 - currentMonthlyPayment)/10000).toFixed(1)}万円）</li>
+                </ul>
+            `;
+        }
+
         // ペアローン・年齢リスク
-        let pairHealthHtml = `・<strong>世帯主の年齢:</strong> ${currentAge}歳 （完済時予想年齢: ${currentAge + remainingYears}歳）<br>`;
+        let totalFinishAge = currentAge + remainingYears;
+        let pairHealthHtml = `・<strong>世帯主の年齢:</strong> ${currentAge}歳 （完済時予想年齢: ${totalFinishAge}歳）<br>`;
         if (loanType === 'pair') {
             pairHealthHtml += `・<strong>配偶者の年齢:</strong> ${spouseAge}歳<br>`;
-            if (currentAge >= 55 || spouseAge >= 55 || (currentAge + remainingYears) >= 70) {
+            if (currentAge >= 55 || spouseAge >= 55 || totalFinishAge >= 70) {
                 pairHealthHtml += `<div class="alert-danger">🚨 【ペアローン・年齢リスク】夫婦それぞれが借入を抱えており、役職定年や健康・収入変化に対するリスクが大きくなる時期です。団信のカバー範囲（各自に付帯か）を再確認してください。</div>`;
             } else {
                 pairHealthHtml += `<div class="alert-warning">⚠️ ペアローンのため、万が一の就業不能時や収入減への備えをご確認ください。</div>`;
             }
         } else {
-            if ((currentAge + remainingYears) >= 70) {
-                pairHealthHtml += `<div class="alert-warning">⚠️ 完済時年齢が ${currentAge + remainingYears}歳となります。多くの銀行のローン上限（80歳未満）には収まりますが、定年後の返済計画にご注意ください。</div>`;
+            if (totalFinishAge >= 70) {
+                pairHealthHtml += `<div class="alert-danger">⚠️ 完済時年齢が ${totalFinishAge}歳となります。定年退職後（60〜65歳以降）もローン返済が続くため、退職金や貯蓄からの繰上返済計画が必須です。</div>`;
+            } else if (totalFinishAge >= 65) {
+                pairHealthHtml += `<div class="alert-warning">⚠️ 完済時年齢が ${totalFinishAge}歳となります。65歳定年退職の時期と重なるため、退職後のキャッシュフローに十分ご注意ください。</div>`;
             } else {
-                pairHealthHtml += `<div style="color:#27ae60; font-weight:bold;">✨ 定年前に完済予定の堅実なスケジュールです。</div>`;
+                pairHealthHtml += `<div style="color:#27ae60; font-weight:bold;">✨ 65歳未満で完済予定の堅実なスケジュールです。</div>`;
             }
         }
 
-        // 修繕・教育・車（リアルな金額試算）
+        // 修繕・教育・車
         let kids = [];
         for(let i=1; i<=5; i++) {
             let kInput = document.getElementById('child'+i);
             if(kInput && kInput.value !== "") kids.push(Number(kInput.value));
         }
 
-        let lifePlanAdviceHtml = `
-            🏠 <strong>住まいの修繕コスト（築 ${buildingAge}年）:</strong><br>
-        `;
+        let lifePlanAdviceHtml = `🏠 <strong>住まいの修繕コスト（築 ${buildingAge}年）:</strong><br>`;
         if (buildingAge >= 15) {
             lifePlanAdviceHtml += `築15〜20年以上経過しているため、外壁・屋根塗装や給湯器・水回り交換などの<strong>大規模修繕（目安：約 150万〜300万円）</strong>が重なりやすい時期です。計画的な積立が不可欠です。<br>`;
         } else {
@@ -532,10 +577,10 @@
         if (kids.length > 0) {
             lifePlanAdviceHtml += `<br>🎓 <strong>お子様の教育費ピーク試算:</strong><br>
             お子様の年齢: ${kids.join('歳, ')}歳。<br>
-            高校・大学進学が重なると、<strong>1人あたり約 200万（国公立）〜600万円超（私立理系・下宿含む場合は1,000万円近く）</strong>の学費が必要になります。ローンの負担増と重なる時期のキャッシュフローに特にご注意ください。<br>`;
+            高校・大学進学が重なる時期は、<strong>1人あたり約 200万（国公立）〜600万円超（私立理系・下宿含む場合は1,000万円近く）</strong>の学費が必要です。ローンの負担増と重なる時期のキャッシュフローにご注意ください。<br>`;
         }
 
-        lifePlanAdviceHtml += `<br>🚗 <strong>車の維持・車検:</strong> 車検、自動車税、数年ごとの買い替え（150万〜300万円）は家計の定期的な大支出です。ローン口座とは別に「目的別口座」での管理をお勧めします。`;
+        lifePlanAdviceHtml += `<br>🚗 <strong>車の維持・車検:</strong> 車検、自動車税、数年ごとの買い替え（150万〜300万円）は定期的な大支出です。「目的別口座」での管理をお勧めします。`;
 
         const checkedCount = document.querySelectorAll('input[name="checkItem"]:checked').length;
         let checkSummaryHtml = `チェック項目（5項目中）: <strong>${checkedCount}項目</strong>クリア。<br>`;
