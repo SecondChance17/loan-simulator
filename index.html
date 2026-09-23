@@ -137,10 +137,10 @@
 
     <form id="loanForm">
         <!-- セクション1：ローン情報入力 -->
-        <div class="section-title">1. 現在のローン情報入力</div>
+        <div class="section-title">1. 現在のローン詳細情報入力</div>
         
         <div class="form-group">
-            <label for="currentBalance">現在のローン残高</label>
+            <label for="currentBalance">現在のローン残高（円）</label>
             <input type="number" id="currentBalance" placeholder="例：現在のローン残高を入力してください（例：30000000）">
         </div>
 
@@ -152,6 +152,22 @@
         <div class="form-group">
             <label for="currentRate">現在の適用金利（％）</label>
             <input type="number" step="0.01" id="currentRate" placeholder="例：現在の金利を入力してください（例：0.5）">
+        </div>
+
+        <div class="form-group">
+            <label for="currentAge">現在の年齢（歳）</label>
+            <input type="number" id="currentAge" placeholder="例：現在の年齢を入力してください（例：40）">
+        </div>
+
+        <div class="form-group">
+            <label for="bonusRatio">ボーナス払い割合</label>
+            <select id="bonusRatio">
+                <option value="" disabled selected>選択してください</option>
+                <option value="0">ボーナス払いなし（毎月平準払い）</option>
+                <option value="20">ボーナス払い 約2割</option>
+                <option value="30">ボーナス払い 約3割</option>
+                <option value="50">ボーナス払い 約5割</option>
+            </select>
         </div>
 
         <!-- セクション2：変動金利・リスクに関するチェックシート -->
@@ -197,14 +213,19 @@
         const balance = document.getElementById('currentBalance').value;
         const years = document.getElementById('remainingYears').value;
         const rate = document.getElementById('currentRate').value;
+        const age = document.getElementById('currentAge').value;
+        const bonus = document.getElementById('bonusRatio').value;
         
         const resultBox = document.getElementById('resultBox');
         const resultText = document.getElementById('resultText');
 
-        if(!balance || !years || !rate) {
-            alert('ローン情報（残高・残り期間・金利）をすべて入力してください。');
+        if(!balance || !years || !rate || !age || bonus === "") {
+            alert('すべての項目（ローン残高、残り期間、金利、年齢、ボーナス払い）を入力・選択してください。');
             return;
         }
+
+        // 完済時年齢の計算
+        const finishAge = Number(age) + Number(years);
 
         // チェックされた個数をカウント
         const checkboxes = document.querySelectorAll('input[name="checkItem"]:checked');
@@ -223,9 +244,13 @@
         // 結果を表示
         resultBox.style.display = 'block';
         resultText.innerHTML = `
-            ご入力ありがとうございます。<br>
-            【入力内容】残高: <strong>${Number(balance).toLocaleString()}円</strong> / 残り期間: <strong>${years}年</strong> / 金利: <strong>${rate}%</strong><br>
-            【チェックシート結果】5項目中 <strong>${checkCount}項目</strong> にチェックが入りました。<br><br>
+            ご入力ありがとうございます。<br><br>
+            <strong>【ご入力情報】</strong><br>
+            ・現在残高: <strong>${Number(balance).toLocaleString()}円</strong>（残り期間: ${years}年）<br>
+            ・適用金利: <strong>${rate}%</strong><br>
+            ・現在の年齢: <strong>${age}歳</strong>（完済時予想年齢: <strong>${finishAge}歳</strong>）<br>
+            <br>
+            <strong>【チェックシート結果】</strong> 5項目中 <strong>${checkCount}項目</strong> にチェックが入りました。<br><br>
             <strong>【アドバイス】</strong><br>${advice}
         `;
     }
