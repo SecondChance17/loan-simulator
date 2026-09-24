@@ -1,2377 +1,460 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>住宅ローン・家計・資産 統合シナリオシミュレーター Ver.2026.09.25</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>住宅ローン・家計・未来リスク統合シミュレーター</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #cbd5e1;
+            --accent-color: #059669;
+        }
 
-<style>
-*{box-sizing:border-box}
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 16px;
+        }
 
-body{
-    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,"Noto Sans JP",sans-serif;
-    line-height:1.65;
-    color:#333;
-    background:#f4f7f6;
-    margin:0;
-    padding:20px;
-}
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-.container{
-    max-width:1050px;
-    margin:0 auto;
-    background:#fff;
-    padding:30px;
-    border-radius:10px;
-    box-shadow:0 4px 18px rgba(0,0,0,.06)
-}
+        /* アイコン画像エリア */
+        .header-profile {
+            text-align: center;
+            margin-bottom: 16px;
+        }
 
-.header{
-    border-bottom:2px solid #0056b3;
-    padding-bottom:15px;
-    margin-bottom:20px
-}
+        .user-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-h1{
-    font-size:22px;
-    color:#0056b3;
-    margin:0
-}
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
 
-.disclaimer-box{
-    font-size:12px;
-    color:#555;
-    background:#f8f9fa;
-    border:1px solid #ccc;
-    padding:12px 15px;
-    border-radius:5px;
-    margin-bottom:20px
-}
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
 
-.section-title{
-    font-size:18px;
-    color:#2c3e50;
-    border-left:4px solid #0056b3;
-    padding:6px 10px;
-    margin:30px 0 15px;
-    background:#f8f9fa
-}
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
 
-.form-group{
-    margin-bottom:18px
-}
+        h2 {
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 6px;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+        }
 
-.sub-group{
-    background:#fdfdfd;
-    border:1px dashed #ccc;
-    padding:15px;
-    border-radius:6px;
-    margin-bottom:15px
-}
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
 
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px
-}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
 
-.grid .form-group{
-    margin-bottom:0
-}
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
 
-label{
-    display:block;
-    font-weight:bold;
-    margin-bottom:5px;
-    color:#444;
-    font-size:14px
-}
+        .hint {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
 
-input[type=number],
-select{
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:4px;
-    font-size:15px
-}
+        input, select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-input:focus,
-select:focus{
-    outline:2px solid #b8daff;
-    border-color:#0056b3
-}
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
 
-.note{
-    font-size:12px;
-    color:#666;
-    background:#fff8df;
-    padding:8px 10px;
-    border-left:4px solid #ffc107;
-    border-radius:2px;
-    margin-top:6px
-}
+        /* 薄い字でのガイド（プレースホルダー） */
+        input::placeholder {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
 
-.btn{
-    background:#0056b3;
-    color:#fff;
-    border:0;
-    padding:14px 20px;
-    font-size:16px;
-    font-weight:bold;
-    border-radius:5px;
-    cursor:pointer;
-    width:100%;
-    margin-top:25px
-}
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            margin-top: 16px;
+        }
 
-.btn:hover{
-    background:#004085
-}
+        button:hover {
+            background-color: var(--primary-hover);
+        }
 
-.result-box{
-    margin-top:30px;
-    padding:22px;
-    background:#eef9ff;
-    border:1px solid #b8daff;
-    border-radius:7px;
-    display:none
-}
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
 
-.result-section{
-    margin-bottom:22px;
-    background:#fff;
-    padding:20px;
-    border-radius:7px;
-    border-left:4px solid #0056b3;
-    box-shadow:0 2px 5px rgba(0,0,0,.02)
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            white-space: nowrap;
+            background-color: #fff;
+            text-align: left;
+            font-size: 0.9rem;
+        }
 
-.result-section h4{
-    margin:0;
-    color:#2c3e50;
-    font-size:16px;
-    border-bottom:1px solid #eee;
-    padding-bottom:8px
-}
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-.sim-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:12px;
-    font-size:13px
-}
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
 
-.sim-table th,
-.sim-table td{
-    border:1px solid #ddd;
-    padding:8px 10px;
-    text-align:right
-}
+        tr:last-child td {
+            border-bottom: none;
+        }
 
-.sim-table th{
-    background:#f2f2f2;
-    text-align:center
-}
+        .result-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
 
-.sim-table td:first-child{
-    text-align:center
-}
+        .sub-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+        }
 
-.scenario-card{
-    background:#fdfefe;
-    border:1px solid #cbd5e1;
-    padding:15px;
-    border-radius:6px;
-    margin-bottom:12px
-}
+        .advice-box {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
 
-.scenario-card h5{
-    margin:0 0 8px;
-    color:#1e293b;
-    font-size:15px;
-    border-bottom:2px solid #e2e8f0;
-    padding-bottom:5px
-}
-
-.alert-info-box,
-.alert-warn-box,
-.alert-danger-box,
-.alert-success-box{
-    padding:12px;
-    border-radius:5px;
-    margin-top:10px
-}
-
-.alert-info-box{
-    background:#f0fdf4;
-    color:#166534;
-    border:1px solid #bbf7d0
-}
-
-.alert-warn-box{
-    background:#fffbeb;
-    color:#92400e;
-    border:1px solid #fde68a
-}
-
-.alert-danger-box{
-    background:#fef2f2;
-    color:#991b1b;
-    border:1px solid #fecaca
-}
-
-.alert-success-box{
-    background:#eff6ff;
-    color:#1e40af;
-    border:1px solid #bfdbfe
-}
-
-.small{
-    font-size:12px;
-    color:#666
-}
-
-.metric-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin-top:12px
-}
-
-.metric{
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:6px;
-    padding:12px
-}
-
-.metric .label{
-    font-size:12px;
-    color:#64748b
-}
-
-.metric .value{
-    font-size:18px;
-    font-weight:bold;
-    color:#0f172a
-}
-
-.hidden{
-    display:none
-}
-
-@media(max-width:700px){
-    body{
-        padding:8px
-    }
-
-    .container{
-        padding:16px
-    }
-
-    .grid,
-    .metric-grid{
-        grid-template-columns:1fr
-    }
-
-    .sim-table{
-        font-size:11px
-    }
-
-    .sim-table th,
-    .sim-table td{
-        padding:6px 5px;
-        white-space:nowrap;
-        overflow:hidden
-    }
-}
-</style>
+        .advice-title {
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 4px;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <!-- アイコン画像表示エリア -->
+    <div class="header-profile">
+        <!-- icon.jpg の部分をご自身の画像ファイル名に変更してください -->
+        <img src="icon.jpg" alt="プロフィールアイコン" class="user-icon" onerror="this.style.display='none'">
+    </div>
 
-<div class="header">
-<h1>住宅ローン・家計・資産 統合シナリオシミュレーター Ver.2026.09.25</h1>
+    <h1>住宅ローン・家計・未来リスク統合シミュレーター</h1>
+    <div class="subtitle">〜手元の書類と現在の家族構成から「現在地」と「将来の備え」を知る道しるべ〜</div>
+
+    <!-- 入力セクション（初期状態はすべて空欄・プレースホルダー表示） -->
+    <div class="card">
+        <h2>1. 手元の書類（返済予定表）の入力</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="principal">現在の借入残高 (万円)</label>
+                <input type="number" id="principal" value="" placeholder="例: 3500">
+                <span class="hint">直近の返済予定表の残高</span>
+            </div>
+            <div class="form-group">
+                <label for="interestRate">当初金利 (%)</label>
+                <input type="number" step="0.01" id="interestRate" value="" placeholder="例: 0.625">
+                <span class="hint">契約時の金利</span>
+            </div>
+            <div class="form-group">
+                <label for="remainingYears">残りの返済期間 (年)</label>
+                <input type="number" id="remainingYears" value="" placeholder="例: 30">
+                <span class="hint">あと何年で完済予定か</span>
+            </div>
+            <div class="form-group">
+                <label for="currentMonthlyPayment">現在の毎月返済額 (円)</label>
+                <input type="number" id="currentMonthlyPayment" value="" placeholder="例: 105000">
+                <span class="hint">ボーナス払いなしの月額</span>
+            </div>
+        </div>
+
+        <div class="sub-section">
+            <h2>2. 変動金利・リスク設定</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="newInterestRate">シミュレーション用 金利 (%)</label>
+                    <input type="number" step="0.01" id="newInterestRate" value="" placeholder="例: 1.625">
+                    <span class="hint">今後想定する金利</span>
+                </div>
+                <div class="form-group">
+                    <label for="hasRules">5年ルール・125%上限</label>
+                    <select id="hasRules">
+                        <option value="yes">適用する（一般的な変動）</option>
+                        <option value="no">適用しない（全期間固定等）</option>
+                    </select>
+                    <span class="hint">急激な負担増を防ぐルールの有無</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sub-section">
+            <h2>3. 家族構成・ライフプラン（FPヒアリング）</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="currentAge">世帯主の現在の年齢 (歳)</label>
+                    <input type="number" id="currentAge" value="" placeholder="例: 42">
+                    <span class="hint">完済時年齢の算出に使用</span>
+                </div>
+                <div class="form-group">
+                    <label for="youngestChildAge">一番下のお子さんの年齢 (歳)</label>
+                    <input type="number" id="youngestChildAge" value="" placeholder="例: 10">
+                    <span class="hint">教育費ピーク時期の目安</span>
+                </div>
+                <div class="form-group">
+                    <label for="carLoanBalance">マイカーローン等の残債 (万円)</label>
+                    <input type="number" id="carLoanBalance" value="" placeholder="例: 0 (なければ空欄)">
+                    <span class="hint">借り換え審査への影響を確認</span>
+                </div>
+                <div class="form-group">
+                    <label for="houseAge">現在の建物の築年数 (年)</label>
+                    <input type="number" id="houseAge" value="" placeholder="例: 8">
+                    <span class="hint">外壁・屋根修繕の目安判定</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sub-section">
+            <h2>4. 売却・住み替え試算（オプション）</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="propertyValue">想定売却価格 (万円)</label>
+                    <input type="number" id="propertyValue" value="" placeholder="例: 3000">
+                    <span class="hint">周辺の相場価格</span>
+                </div>
+                <div class="form-group">
+                    <label for="brokerageFeeRate">仲介手数料率 (%)</label>
+                    <input type="number" step="0.1" id="brokerageFeeRate" value="" placeholder="分からない場合は空欄（標準3.3%適用）">
+                    <span class="hint">分からない場合は自動で標準値が適用されます</span>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="calculateAll()">総合シミュレーションを実行する</button>
+    </div>
+
+    <!-- 結果表示セクション -->
+    <div class="card" id="resultCard" style="display: none;">
+        <h2>シミュレーション結果 ＆ FPアドバイス</h2>
+        <div id="summaryText" style="margin-bottom: 12px; font-weight: 600;"></div>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>分析・リスク項目</th>
+                        <th>計算結果・数値</th>
+                        <th>解説・アドバイス</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTableBody">
+                    <!-- JavaScriptで動的挿入 -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="advice-box" id="expertAdviceBox">
+            <div class="advice-title">💡 FPからの総合アドバイス</div>
+            <div id="expertAdviceText">ここに専門的なアドバイスが記載されます。</div>
+        </div>
+    </div>
 </div>
-
-<div class="disclaimer-box">
-<strong>【ご利用上の注意】</strong><br>
-本ツールは、月次計算エンジンを用いて金利変動、返済額見直し、元金の減り方、繰上返済、借換え、期間延長、売却時の残債を同一条件で比較するための試算ツールです。銀行の返済予定表・金利変更通知書・売却査定・正式な借換審査の代替ではありません。特に「5年・125％ルール」は金融機関によって採用状況や細部が異なるため、実際の契約条件を優先してください。
-</div>
-
-
-<form id="simulatorForm">
-
-<div class="section-title">1. 基本情報・契約形態</div>
-
-<div class="grid">
-
-<div class="form-group">
-<label for="simulationPurpose">利用目的</label>
-<select id="simulationPurpose">
-<option value="refinance_variable">現在のローンの維持・繰上・借換・売却の分岐点を知りたい</option>
-<option value="buy_planning">購入前に返済可能額を考える参考にしたい</option>
-</select>
-</div>
-
-<div class="form-group">
-<label for="currentAge">世帯主の現在年齢（歳）</label>
-<input type="number" id="currentAge" value="42" min="18" max="100">
-</div>
-
-</div>
-
-
-<div class="grid">
-
-<div class="form-group">
-<label for="repaymentMethod">返済方式</label>
-<select id="repaymentMethod">
-<option value="equal_payment">元利均等返済</option>
-<option value="equal_principal">元金均等返済</option>
-</select>
-</div>
-
-<div class="form-group">
-<label for="reviewRule">変動金利の返済額見直し方式</label>
-<select id="reviewRule">
-<option value="rule_5year_125">5年ルール＋125％上限</option>
-<option value="rule_5year_only">5年ごと見直し（125％上限なし）</option>
-<option value="rule_none">上限なし・金利変更時に再計算</option>
-<option value="fixed_type">固定型（返済額変更なし）</option>
-</select>
-</div>
-
-</div>
-
-
-<div class="section-title">2. 現在の状況（※金額は万円）</div>
-
-<div class="grid">
-
-<div class="form-group">
-<label for="currentBalance">現在のローン残高</label>
-<input type="number" id="currentBalance" value="3200" min="0">
-</div>
-
-<div class="form-group">
-<label for="remainingYears">残り返済期間（年）</label>
-<input type="number" id="remainingYears" value="26" min="1" max="50">
-</div>
-
-<div class="form-group">
-<label for="currentMonthlyPayment">現在の毎月返済額</label>
-<input type="number" step="0.1" id="currentMonthlyPayment" value="10.0" min="0.1">
-</div>
-
-<div class="form-group">
-<label for="currentBonusPayment">ボーナス返済（1回あたり・年2回）</label>
-<input type="number" step="0.1" id="currentBonusPayment" value="0" min="0">
-</div>
-
-<div class="form-group">
-<label for="currentRate">現在の適用金利（％）</label>
-<input type="number" step="0.01" id="currentRate" value="1.3" min="0">
-</div>
-
-</div>
-
-
-<div class="section-title">3. 金利上昇タイムライン</div>
-
-<div class="sub-group">
-
-<div class="note">
-このモデルでは「13か月目から1年後金利、37か月目から3年後金利、61か月目以降は5年後金利」という段階的な金利シナリオを採用します。実際の銀行の金利改定時期とは異なる場合があります。
-</div>
-
-<div class="grid">
-
-<div class="form-group">
-<label for="rateYear1">1年後の金利（％）</label>
-<input type="number" step="0.01" id="rateYear1" value="1.3" min="0">
-</div>
-
-<div class="form-group">
-<label for="rateYear3">3年後の金利（％）</label>
-<input type="number" step="0.01" id="rateYear3" value="1.8" min="0">
-</div>
-
-<div class="form-group">
-<label for="rateYear5">5年後以降の金利（％）</label>
-<input type="number" step="0.01" id="rateYear5" value="2.3" min="0">
-</div>
-
-</div>
-</div>
-
-
-<div class="section-title">4. 繰上返済・借換・売却の前提</div>
-
-<div class="grid">
-
-<div class="form-group">
-<label for="prepaymentAmount">繰上返済額（万円）</label>
-<input type="number" step="1" id="prepaymentAmount" value="200" min="0">
-</div>
-
-<div class="form-group">
-<label for="prepaymentMode">繰上返済方法</label>
-<select id="prepaymentMode">
-<option value="reduce_period">期間短縮型</option>
-<option value="reduce_payment">返済額軽減型</option>
-</select>
-</div>
-
-<div class="form-group">
-<label for="targetMonthlyPayment">希望する毎月返済額の上限（万円）</label>
-<input type="number" step="0.1" id="targetMonthlyPayment" value="10.0" min="0.1">
-</div>
-
-<div class="form-group">
-<label for="refinanceRate">借換先金利（％）</label>
-<input type="number" step="0.01" id="refinanceRate" value="2.5" min="0">
-</div>
-
-<div class="form-group">
-<label for="refinanceCost">借換諸費用（万円）</label>
-<input type="number" step="1" id="refinanceCost" value="80" min="0">
-</div>
-
-<div class="form-group">
-<label for="refinanceCostMode">借換諸費用の扱い</label>
-<select id="refinanceCostMode">
-<option value="finance">新ローンに上乗せして借りる</option>
-<option value="cash">手元現金で支払う</option>
-</select>
-</div>
-
-<div class="form-group">
-<label for="currentHomeValue">現在の自宅想定売却価格（万円）</label>
-<input type="number" id="currentHomeValue" value="3000" min="0">
-</div>
-
-<div class="form-group">
-<label for="homePriceDeclineRate">住宅価格の年間下落率（％）</label>
-<input type="number" step="0.1" id="homePriceDeclineRate" value="1.0" min="0" max="20">
-</div>
-
-<div class="form-group">
-<label for="otherSaleCosts">仲介手数料以外の売却費用（万円）</label>
-<input type="number" step="1" id="otherSaleCosts" value="30" min="0">
-</div>
-
-<div class="form-group">
-<label for="brokerFeeType">仲介手数料モデル</label>
-<select id="brokerFeeType">
-<option value="standard">簡易上限式（3.3％＋6.6万円）</option>
-<option value="flat_33">3.3％のみ</option>
-</select>
-</div>
-
-</div>
-
-<button type="button" class="btn" onclick="runMonthlySimulationEngine()">
-月次エンジンでシミュレーションを実行する
-</button>
-
-</form>
-
-
-<div id="resultBox" class="result-box">
-
-<h3>月次シミュレーション統合レポート</h3>
-
-<div id="resOverview"></div>
-
-<div class="result-section">
-<h4>1. 金利上昇タイムラインごとの「元金・利息・残高」</h4>
-<div id="resYearlyTable"></div>
-</div>
-
-<div class="result-section">
-<h4>2. 6つの出口・選択肢シナリオ</h4>
-<div id="resSixScenarios"></div>
-</div>
-
-<div class="result-section">
-<h4>3. 売却時収支の時間経過（今・2年後・5年後）</h4>
-<div id="resSaleTransition"></div>
-</div>
-
-<div class="result-section">
-<h4>4. 分岐点指標</h4>
-<div id="resBifurcation"></div>
-</div>
-
-<div class="result-section">
-<h4>5. 総合的な状況整理</h4>
-<div id="resSummaryAdvice"></div>
-</div>
-
-</div>
-</div>
-
 
 <script>
-
-const MAX_MONTHS=600;
-
-
-/* =========================
-   表示用関数
-========================= */
-
-function yen(v){
-    return Math.round(v).toLocaleString('ja-JP')+'円';
-}
-
-function man(v,d=1){
-    return (v/10000).toFixed(d)+'万円';
-}
-
-
-/* =========================
-   元利均等返済額
-========================= */
-
-function calcPMT(principal,annualRate,months){
-
-    if(months<=0) return principal;
-
-    if(principal<=0) return 0;
-
-    if(annualRate===0){
-        return principal/months;
-    }
-
-    const r=annualRate/100/12;
-
-    const f=Math.pow(1+r,months);
-
-    return principal*r*f/(f-1);
-}
-
-
-/* =========================
-   金利タイムライン
-========================= */
-
-function getRate(month,initialRate,timeline){
-
-    let r=initialRate;
-
-    for(const t of timeline){
-
-        if(month>=t.month){
-            r=t.rate;
-        }
-
-    }
-
-    return r;
-}
-
-
-/* =========================
-   仲介手数料
-========================= */
-
-function brokerFee(price,type){
-
-    if(price<=0) return 0;
-
-    if(type==='standard'){
-        return price*0.033+66000;
-    }
-
-    return price*0.033;
-}
-
-
-/* =========================
-   5年ごとの見直し月
-========================= */
-
-function reviewMonth(m,rule){
-
-    return (
-        m>1 &&
-        (m-1)%60===0 &&
-        (
-            rule==='rule_5year_125' ||
-            rule==='rule_5year_only'
-        )
-    );
-}
-
-
-/* =========================
-   ローン月次シミュレーション
-========================= */
-
-function simulateLoan({
-    balance,
-    months,
-    monthlyPmt,
-    bonusPmt,
-    initialRate,
-    rateTimeline,
-    method,
-    rule
-}){
-
-    let curBalance=Math.max(0,balance);
-
-    let curMonthlyPmt=Math.max(0,monthlyPmt);
-
-    let unpaidInterest=0;
-
-    let totalInterest=0;
-    let totalPaid=0;
-    let totalPrincipal=0;
-    let totalUnpaidAccrued=0;
-
-    let yearlyData=[];
-    let log=[];
-
-    let yearInterest=0;
-    let yearPrincipal=0;
-    let yearPaid=0;
-
-    const originalBalance=curBalance;
-    const originalMonths=months;
-
-    /*
-      125％上限の基準。
-      5年ごとに更新される返済額を基準にする。
-    */
-    let capBase=curMonthlyPmt;
-
-    /*
-      元金均等返済の場合、
-      元金部分は当初残高÷当初返済回数で固定。
-    */
-    const fixedPrincipalPerMonth=
-        method==='equal_principal'
-        ? originalBalance/originalMonths
-        : 0;
-
-    let reachedSimulationLimit=true;
-
-
-    for(
-        let m=1;
-        m<=months &&
-        m<=MAX_MONTHS &&
-        curBalance>0;
-        m++
-    ){
-
-        const currentRate=
-            getRate(m,initialRate,rateTimeline);
-
-
-        /* =========================
-           返済額見直し
-        ========================= */
-
-        if(
-            method==='equal_payment' &&
-            reviewMonth(m,rule)
-        ){
-
-            const rem=months-m+1;
-
-            const calculated=
-                calcPMT(
-                    curBalance+unpaidInterest,
-                    currentRate,
-                    rem
-                );
-
-            if(rule==='rule_5year_125'){
-
-                curMonthlyPmt=
-                    Math.min(
-                        calculated,
-                        capBase*1.25
-                    );
-
-            }else{
-
-                curMonthlyPmt=calculated;
-
-            }
-
-            capBase=curMonthlyPmt;
-        }
-
-
-        /*
-          「上限なし・金利変更時に再計算」
-        */
-
-        else if(
-            method==='equal_payment' &&
-            rule==='rule_none' &&
-            m>1
-        ){
-
-            const prevRate=
-                getRate(
-                    m-1,
-                    initialRate,
-                    rateTimeline
-                );
-
-            if(currentRate!==prevRate){
-
-                curMonthlyPmt=
-                    calcPMT(
-                        curBalance+unpaidInterest,
-                        currentRate,
-                        months-m+1
-                    );
-
-            }
-        }
-
-
-        /* =========================
-           当月利息
-        ========================= */
-
-        const monthlyInterest=
-            Math.round(
-                curBalance*(currentRate/100)/12
-            );
-
-
-        /* =========================
-           当月支払可能額
-        ========================= */
-
-        let available=
-            method==='equal_payment'
-            ? curMonthlyPmt
-            : fixedPrincipalPerMonth+monthlyInterest;
-
-
-        /* =========================
-           過去の未払利息を優先
-        ========================= */
-
-        let paidUnpaid=
-            Math.min(
-                available,
-                unpaidInterest
-            );
-
-        available-=paidUnpaid;
-
-        unpaidInterest-=paidUnpaid;
-
-
-        /* =========================
-           当月利息
-        ========================= */
-
-        let paidCurrentInterest=
-            Math.min(
-                available,
-                monthlyInterest
-            );
-
-        available-=paidCurrentInterest;
-
-
-        /* =========================
-           元金返済
-        ========================= */
-
-        let principalPayment=0;
-
-        if(
-            unpaidInterest<=0 &&
-            paidCurrentInterest>=monthlyInterest
-        ){
-
-            if(method==='equal_payment'){
-
-                principalPayment=
-                    Math.min(
-                        available,
-                        curBalance
-                    );
-
-            }else{
-
-                principalPayment=
-                    Math.min(
-                        fixedPrincipalPerMonth,
-                        curBalance
-                    );
-
-            }
-
-        }
-
-        available-=principalPayment;
-
-
-        /* =========================
-           未払利息
-        ========================= */
-
-        const unpaidThisMonth=
-            Math.max(
-                0,
-                monthlyInterest-paidCurrentInterest
-            );
-
-        if(unpaidThisMonth>0){
-
-            unpaidInterest+=unpaidThisMonth;
-
-            totalUnpaidAccrued+=
-                unpaidThisMonth;
-
-        }
-
-
-        /* =========================
-           ボーナス返済
-        ========================= */
-
-        let bonusPaid=0;
-
-        if(
-            m%6===0 &&
-            bonusPmt>0 &&
-            unpaidInterest<=0 &&
-            paidCurrentInterest>=monthlyInterest &&
-            curBalance>0
-        ){
-
-            bonusPaid=
-                Math.min(
-                    bonusPmt,
-                    curBalance-principalPayment
-                );
-
-            principalPayment+=
-                Math.max(0,bonusPaid);
-
-        }
-
-
-        /* =========================
-           残高更新
-        ========================= */
-
-        curBalance=
-            Math.max(
-                0,
-                curBalance-principalPayment
-            );
-
-
-        const actualPaid=
-            paidUnpaid+
-            paidCurrentInterest+
-            principalPayment;
-
-
-        totalInterest+=monthlyInterest;
-        totalPaid+=actualPaid;
-        totalPrincipal+=principalPayment;
-
-        yearInterest+=monthlyInterest;
-        yearPrincipal+=principalPayment;
-        yearPaid+=actualPaid;
-
-
-        log.push({
-            month:m,
-            rate:currentRate,
-            balance:curBalance,
-            interest:monthlyInterest,
-            principal:principalPayment,
-            paid:actualPaid,
-            monthlyPmt:curMonthlyPmt,
-            unpaidInterest:unpaidInterest
-        });
-
-
-        /* =========================
-           年次データ
-        ========================= */
-
-        if(
-            m%12===0 ||
-            m===months ||
-            curBalance===0
-        ){
-
-            yearlyData.push({
-                year:Math.ceil(m/12),
-                rate:currentRate,
-                balance:curBalance,
-                interest:yearInterest,
-                principal:yearPrincipal,
-                paid:yearPaid,
-                monthlyPmt:curMonthlyPmt,
-                unpaidInterest:unpaidInterest
-            });
-
-            yearInterest=0;
-            yearPrincipal=0;
-            yearPaid=0;
-        }
-
-
-        if(curBalance<=0){
-
-            reachedSimulationLimit=false;
-
-            break;
-        }
-
-    }
-
-
-    if(curBalance<=0){
-        reachedSimulationLimit=false;
-    }
-
-
-    return {
-        totalInterest,
-        totalPaid,
-        totalPrincipal,
-        totalUnpaidAccrued,
-        finalBalance:curBalance,
-        unpaidInterest,
-        yearlyData,
-        log,
-        reachedSimulationLimit,
-        monthsSimulated:log.length,
-        originalBalance,
-        originalMonths
-    };
-}
-
-
-/* =========================
-   指定月の残高
-========================= */
-
-function findBalanceAt(sim,months){
-
-    if(months<=0){
-        return sim.originalBalance;
-    }
-
-    const x=
-        sim.log.find(
-            v=>v.month===months
-        );
-
-    if(x){
-        return x.balance;
-    }
-
-    return sim.finalBalance;
-}
-
-
-/* =========================
-   指定月の未払利息
-========================= */
-
-function findUnpaidAt(sim,months){
-
-    if(months<=0){
-        return 0;
-    }
-
-    const x=
-        sim.log.find(
-            v=>v.month===months
-        );
-
-    if(x){
-        return x.unpaidInterest;
-    }
-
-    return sim.unpaidInterest;
-}
-
-
-/* =========================
-   元金停滞金利
-   独自指標
-========================= */
-
-function findBalanceStagnationRate(
-    balance,
-    months,
-    monthlyPmt
-){
-
-    /*
-      「現在の月額返済を維持した場合、
-       5年後に残高が開始残高以上になる金利」
-      を独自指標として探索。
-
-      契約上の正式な基準ではない。
-    */
-
-    const targetMonths=
-        Math.min(
-            60,
-            months
-        );
-
-
-    let lo=0;
-    let hi=15;
-
-
-    for(let i=0;i<60;i++){
-
-        const mid=(lo+hi)/2;
-
-
-        const test=
-            simulateLoan({
-                balance,
-                months,
-                monthlyPmt,
-                bonusPmt:0,
-                initialRate:mid,
-                rateTimeline:[],
-                method:'equal_payment',
-                rule:'fixed_type'
-            });
-
-
-        const balanceAtTarget=
-            findBalanceAt(
-                test,
-                targetMonths
-            );
-
-
-        /*
-          金利が高く、
-          5年後残高が開始残高以上なら
-          停滞側。
-        */
-
-        if(balanceAtTarget>=balance){
-
-            hi=mid;
-
-        }else{
-
-            lo=mid;
-
-        }
-
-    }
-
-
-    return (lo+hi)/2;
-}
-
-
-/* =========================
-   入力値検証
-========================= */
-
-function validateInputs(v){
-
-    const errors=[];
-
-
-    if(v.balance<=0){
-
-        errors.push(
-            '現在のローン残高は0より大きくしてください。'
-        );
-
-    }
-
-
-    if(v.months<=0){
-
-        errors.push(
-            '残り返済期間を確認してください。'
-        );
-
-    }
-
-
-    if(v.monthly<=0){
-
-        errors.push(
-            '毎月返済額を確認してください。'
-        );
-
-    }
-
-
-    if(v.bonus<0){
-
-        errors.push(
-            'ボーナス返済額を確認してください。'
-        );
-
-    }
-
-
-    if(v.age<18 || v.age>100){
-
-        errors.push(
-            '年齢を確認してください。'
-        );
-
-    }
-
-
-    return errors;
-}
-
-
-/* =========================
-   メイン処理
-========================= */
-
-function runMonthlySimulationEngine(){
-
-    const v={
-
-        age:Number(
-            document.getElementById('currentAge').value
-        ),
-
-        balance:Number(
-            document.getElementById('currentBalance').value
-        )*10000,
-
-        years:Number(
-            document.getElementById('remainingYears').value
-        ),
-
-        monthly:Number(
-            document.getElementById('currentMonthlyPayment').value
-        )*10000,
-
-        bonus:Number(
-            document.getElementById('currentBonusPayment').value
-        )*10000,
-
-        rate:Number(
-            document.getElementById('currentRate').value
-        ),
-
-        target:Number(
-            document.getElementById('targetMonthlyPayment').value
-        )*10000,
-
-        refRate:Number(
-            document.getElementById('refinanceRate').value
-        ),
-
-        refCost:Number(
-            document.getElementById('refinanceCost').value
-        )*10000,
-
-        home:Number(
-            document.getElementById('currentHomeValue').value
-        )*10000,
-
-        decline:Number(
-            document.getElementById('homePriceDeclineRate').value
-        )/100,
-
-        otherSale:Number(
-            document.getElementById('otherSaleCosts').value
-        )*10000,
-
-        brokerType:
-            document.getElementById('brokerFeeType').value,
-
-        refCostMode:
-            document.getElementById('refinanceCostMode').value,
-
-        method:
-            document.getElementById('repaymentMethod').value,
-
-        rule:
-            document.getElementById('reviewRule').value,
-
-        prepay:Number(
-            document.getElementById('prepaymentAmount').value
-        )*10000,
-
-        prepayMode:
-            document.getElementById('prepaymentMode').value,
-
-        r1:Number(
-            document.getElementById('rateYear1').value
-        ),
-
-        r3:Number(
-            document.getElementById('rateYear3').value
-        ),
-
-        r5:Number(
-            document.getElementById('rateYear5').value
-        )
-
-    };
-
-
-    const errors=
-        validateInputs(v);
-
-
-    if(errors.length){
-
-        alert(
-            errors.join('\n')
-        );
-
+function calculateAll() {
+    const principalInput = document.getElementById('principal').value;
+    const rateInput = document.getElementById('interestRate').value;
+    const yearsInput = document.getElementById('remainingYears').value;
+    const currentPaymentInput = document.getElementById('currentMonthlyPayment').value;
+    const newRateInput = document.getElementById('newInterestRate').value;
+    const hasRules = document.getElementById('hasRules').value;
+    
+    const currentAgeInput = document.getElementById('currentAge').value;
+    const carLoanInput = document.getElementById('carLoanBalance').value;
+    const houseAgeInput = document.getElementById('houseAge').value;
+
+    const propertyValueInput = document.getElementById('propertyValue').value;
+    const brokerageFeeRateInput = document.getElementById('brokerageFeeRate').value;
+
+    if (!principalInput || !rateInput || !yearsInput) {
+        alert('「借入残高」「当初金利」「残返済期間」は必須項目です。手元の書類を見てご入力ください。');
         return;
     }
 
+    const principal = parseFloat(principalInput) * 10000;
+    const annualRate = parseFloat(rateInput) / 100;
+    const monthlyRate = annualRate / 12;
+    const totalMonths = parseInt(yearsInput) * 12;
 
-    const months=
-        v.years*12;
+    let standardMonthlyPayment = 0;
+    if (monthlyRate === 0) {
+        standardMonthlyPayment = principal / totalMonths;
+    } else {
+        standardMonthlyPayment = principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+    }
 
+    const firstMonthInterest = principal * monthlyRate;
 
-    /*
-      金利タイムライン
-    */
-
-    const timeline=[
-        {
-            month:13,
-            rate:v.r1
-        },
-        {
-            month:37,
-            rate:v.r3
-        },
-        {
-            month:61,
-            rate:v.r5
+    let postRateMonthlyPayment = "-";
+    let ruleDescription = "金利上昇シロなし";
+    if (newRateInput) {
+        const newAnnualRate = parseFloat(newRateInput) / 100;
+        const newMonthlyRate = newAnnualRate / 12;
+        let theoreticalPayment = principal * newMonthlyRate * Math.pow(1 + newMonthlyRate, totalMonths) / (Math.pow(1 + newMonthlyRate, totalMonths) - 1);
+        
+        if (hasRules === 'yes') {
+            const basePayment = currentPaymentInput ? parseFloat(currentPaymentInput) : standardMonthlyPayment;
+            const maxLimitedPayment = basePayment * 1.25;
+            postRateMonthlyPayment = Math.min(theoreticalPayment, maxLimitedPayment);
+            ruleDescription = `5年ルール適用 (上限目安: ${Math.round(maxLimitedPayment).toLocaleString()}円)`;
+        } else {
+            postRateMonthlyPayment = theoreticalPayment;
+            ruleDescription = "ルール適用なし（即時反映）";
         }
-    ];
-
-
-    /*
-      基本シミュレーション
-    */
-
-    const base=
-        simulateLoan({
-            balance:v.balance,
-            months,
-            monthlyPmt:v.monthly,
-            bonusPmt:v.bonus,
-            initialRate:v.rate,
-            rateTimeline:timeline,
-            method:v.method,
-            rule:v.rule
-        });
-
-
-    /* =========================
-       現在返済額チェック
-    ========================= */
-
-    const standardPmt=
-        calcPMT(
-            v.balance,
-            v.rate,
-            months
-        );
-
-
-    const annualCash=
-        v.monthly*12+
-        v.bonus*2;
-
-
-    const annualStandard=
-        standardPmt*12+
-        v.bonus*2;
-
-
-    let inputCheck='';
-
-
-    if(
-        v.method==='equal_payment' &&
-        v.monthly<standardPmt
-    ){
-
-        inputCheck=`
-        <div class="alert-warn-box">
-        現在の毎月返済額は、単純な元利均等計算による目安
-        （約 <strong>${man(standardPmt,1)}</strong>/月）
-        を下回っています。
-        金利・契約条件によっては元金が十分に減らない、
-        または未払利息が発生する可能性があります。
-        </div>
-        `;
-
-    }else{
-
-        inputCheck=`
-        <div class="alert-success-box">
-        現在の返済額は、現在金利・残期間だけから計算した
-        元利均等返済の目安
-        （約 <strong>${man(standardPmt,1)}</strong>/月）
-        以上です。
-        </div>
-        `;
-
     }
 
+    let finishAgeText = "未入力";
+    if (currentAgeInput && yearsInput) {
+        const finishAge = parseInt(currentAgeInput) + parseInt(yearsInput);
+        finishAgeText = `${finishAge} 歳`;
+    }
 
-    document.getElementById(
-        'resOverview'
-    ).innerHTML=`
+    const carLoan = carLoanInput ? parseFloat(carLoanInput) * 10000 : 0;
+    let carLoanWarning = "なし（借換え・審査へのマイナス要因小）";
+    if (carLoan > 0) {
+        carLoanWarning = `残債 ${carLoanInput}万円あり（要注意）`;
+    }
 
-    <div class="metric-grid">
-
-        <div class="metric">
-            <div class="label">現在残高</div>
-            <div class="value">${man(v.balance,0)}</div>
-        </div>
-
-        <div class="metric">
-            <div class="label">現在金利</div>
-            <div class="value">${v.rate.toFixed(2)}%</div>
-        </div>
-
-        <div class="metric">
-            <div class="label">残り期間</div>
-            <div class="value">${v.years}年</div>
-        </div>
-
-    </div>
-
-    ${inputCheck}
-
-    <div class="small">
-    年間返済額（毎月＋ボーナス）は約
-    ${man(annualCash,1)}。
-    比較用の元利均等目安は約
-    ${man(annualStandard,1)}/年です。
-    </div>
-
-    `;
-
-
-    /* =========================
-       年次テーブル
-    ========================= */
-
-    let yearly=`
-
-    <p>
-    金利は
-    「13か月目：${v.r1}% →
-    37か月目：${v.r3}% →
-    61か月目以降：${v.r5}%」
-    として計算しています。
-    </p>
-
-    <table class="sim-table">
-
-    <tr>
-        <th>経過年</th>
-        <th>金利</th>
-        <th>年間支払</th>
-        <th>年間利息</th>
-        <th>年間元金</th>
-        <th>年末残高</th>
-        <th>未払利息</th>
-    </tr>
-
-    `;
-
-
-    base.yearlyData.forEach(
-        (d,i)=>{
-
-            if(
-                i<5 ||
-                i===base.yearlyData.length-1
-            ){
-
-                yearly+=`
-
-                <tr>
-
-                    <td>
-                    第${d.year}年
-                    </td>
-
-                    <td>
-                    ${d.rate.toFixed(2)}%
-                    </td>
-
-                    <td>
-                    ${man(d.paid,1)}
-                    </td>
-
-                    <td>
-                    ${man(d.interest,1)}
-                    </td>
-
-                    <td>
-                    ${man(d.principal,1)}
-                    </td>
-
-                    <td>
-                    ${man(d.balance,1)}
-                    </td>
-
-                    <td>
-                    ${man(d.unpaidInterest,1)}
-                    </td>
-
-                </tr>
-
-                `;
-
-            }
-            else if(i===5){
-
-                yearly+=`
-
-                <tr>
-                    <td colspan="7"
-                        style="text-align:center;color:#888">
-                        …（中略）…
-                    </td>
-                </tr>
-
-                `;
-
-            }
-
+    // 売却・住み替え試算（わからない場合の費用自動補完）
+    let salesResultText = "未入力";
+    if (propertyValueInput) {
+        const salePrice = parseFloat(propertyValueInput) * 10000;
+        // 仲介手数料が空欄の場合は一般的な3.3%＋6.6万円を自動適用
+        const feeRate = brokerageFeeRateInput ? parseFloat(brokerageFeeRateInput) / 100 : 0.033;
+        const brokerageFee = (salePrice * feeRate) + 66000; 
+        const generalRefinanceOrSellingCost = 300000; // わからない場合の一般的な諸費用平均値（30万円）自動補完
+        const netProceeds = salePrice - brokerageFee - generalRefinanceOrSellingCost - principal - carLoan;
+        
+        if (netProceeds >= 0) {
+            salesResultText = `手残り約 ${Math.round(netProceeds / 10000).toLocaleString()} 万円（プラス）`;
+        } else {
+            salesResultText = `不足約 ${Math.round(Math.abs(netProceeds) / 10000).toLocaleString()} 万円（要追い金）`;
         }
-    );
-
-
-    yearly+=`
-
-    </table>
-
-    <p class="small">
-
-    総利息：約 ${man(base.totalInterest,0)}
-    ／
-    総支払：約 ${man(base.totalPaid,0)}
-    ／
-    累計未払利息：約 ${man(base.totalUnpaidAccrued,0)}
-    ／
-    シミュレーション実行月数：
-    ${base.monthsSimulated}か月
-
-    </p>
-
-    `;
-
-
-    if(base.reachedSimulationLimit){
-
-        yearly+=`
-
-        <div class="alert-warn-box">
-
-        残高がシミュレーション上限内で0円になっていません。
-        表示上の「シミュレーション範囲外」は、
-        実際の契約完済を意味しません。
-
-        </div>
-
-        `;
-
     }
 
-
-    document.getElementById(
-        'resYearlyTable'
-    ).innerHTML=yearly;
-
-
-    /* =========================
-       ② 繰上返済
-    ========================= */
-
-    const prepay=
-        Math.min(
-            v.prepay,
-            v.balance
-        );
-
-
-    const prepayBalance=
-        v.balance-prepay;
-
-
-    const prepayMonths=
-        months;
-
-
-    let prepayMonthly=
-        v.monthly;
-
-
-    if(
-        v.prepayMode==='reduce_payment'
-    ){
-
-        if(v.method==='equal_principal'){
-
-            /*
-              元金均等返済では、
-              繰上後の残高÷残期間を
-              新しい元金部分の目安とする。
-            */
-
-            prepayMonthly=
-                calcPMT(
-                    prepayBalance,
-                    v.rate,
-                    months
-                );
-
-        }else{
-
-            prepayMonthly=
-                calcPMT(
-                    prepayBalance,
-                    v.rate,
-                    months
-                );
-
-        }
-
-    }
-
-
-    const prepaySim=
-        simulateLoan({
-
-            balance:prepayBalance,
-
-            months:prepayMonths,
-
-            monthlyPmt:prepayMonthly,
-
-            bonusPmt:v.bonus,
-
-            initialRate:v.rate,
-
-            rateTimeline:timeline,
-
-            method:v.method,
-
-            rule:v.rule
-
-        });
-
-
-    const prepayTermSaved=
-        Math.max(
-            0,
-            months-prepaySim.monthsSimulated
-        );
-
-
-    /* =========================
-       ③ 借換え
-    ========================= */
-
-    const refPrincipal=
-        v.balance+
-        (
-            v.refCostMode==='finance'
-            ?v.refCost
-            :0
-        );
-
-
-    const refMonthly=
-        calcPMT(
-            refPrincipal,
-            v.refRate,
-            months
-        );
-
-
-    const refSim=
-        simulateLoan({
-
-            balance:refPrincipal,
-
-            months,
-
-            monthlyPmt:refMonthly,
-
-            bonusPmt:0,
-
-            initialRate:v.refRate,
-
-            rateTimeline:[],
-
-            method:'equal_payment',
-
-            rule:'fixed_type'
-
-        });
-
-
-    /* =========================
-       ④ 期間延長
-    ========================= */
-
-    const extMonths=
-        months+60;
-
-
-    const extMonthly=
-        calcPMT(
-            v.balance,
-            v.r5,
-            extMonths
-        );
-
-
-    const extSim=
-        simulateLoan({
-
-            balance:v.balance,
-
-            months:extMonths,
-
-            monthlyPmt:extMonthly,
-
-            bonusPmt:0,
-
-            initialRate:v.r5,
-
-            rateTimeline:[],
-
-            method:'equal_payment',
-
-            rule:'fixed_type'
-
-        });
-
-
-    /* =========================
-       ⑤ 希望月額を維持するための
-          必要元本削減額
-    ========================= */
-
-    let requiredPrepay=0;
-
-
-    if(v.target>0){
-
-        const futurePmt=
-            calcPMT(
-                v.balance,
-                v.r5,
-                months
-            );
-
-
-        if(v.target>=futurePmt){
-
-            requiredPrepay=0;
-
-        }else{
-
-            let lo=0;
-            let hi=v.balance;
-
-
-            for(let i=0;i<60;i++){
-
-                const mid=
-                    (lo+hi)/2;
-
-
-                const pmt=
-                    calcPMT(
-                        v.balance-mid,
-                        v.r5,
-                        months
-                    );
-
-
-                if(pmt>v.target){
-
-                    lo=mid;
-
-                }else{
-
-                    hi=mid;
-
-                }
-
-            }
-
-
-            requiredPrepay=hi;
-
-        }
-
-    }
-
-
-    /* =========================
-       ⑥ 今すぐ売却
-    ========================= */
-
-    const nowFee=
-        brokerFee(
-            v.home,
-            v.brokerType
-        );
-
-
-    const nowLoanSettlement=
-        v.balance+
-        base.unpaidInterest;
-
-
-    const nowNet=
-        v.home-
-        nowFee-
-        v.otherSale-
-        nowLoanSettlement;
-
-
-    /* =========================
-       完済年齢表示
-    ========================= */
-
-    const completeAge=sim=>{
-
-        if(sim.reachedSimulationLimit){
-
-            return 'シミュレーション範囲外';
-
-        }
-
-        return (
-            v.age+
-            Math.ceil(
-                sim.monthsSimulated/12
-            )
-        )+'歳';
-
-    };
-
-
-    /* =========================
-       6シナリオ
-    ========================= */
-
-    const six=`
-
-    <div class="scenario-card">
-
-    <h5>
-    ① 現状維持：
-    金利上昇タイムラインを受け入れる
-    </h5>
-
-    <ul>
-
-    <li>
-    総支払：約
-    <strong>${man(base.totalPaid,0)}</strong>
-    （利息：約 ${man(base.totalInterest,0)}）
-    </li>
-
-    <li>
-    累計未払利息：約
-    <strong>${man(base.totalUnpaidAccrued,0)}</strong>
-    </li>
-
-    <li>
-    完済表示：
-    <strong>${completeAge(base)}</strong>
-    </li>
-
-    </ul>
-
-    </div>
-
-
-    <div class="scenario-card">
-
-    <h5>
-    ② 繰上返済：
-    ${v.prepayMode==='reduce_period'
-        ?'期間短縮型'
-        :'返済額軽減型'}
-    </h5>
-
-    <ul>
-
-    <li>
-    繰上返済額：
-    <strong>${man(prepay,0)}</strong>
-    </li>
-
-    <li>
-    繰上後の総利息：約
-    <strong>${man(prepaySim.totalInterest,0)}</strong>
-    </li>
-
-    <li>
-    利息削減効果の目安：約
-    <strong>
-    ${man(
-        Math.max(
-            0,
-            base.totalInterest-
-            prepaySim.totalInterest
-        ),
-        0
-    )}
-    </strong>
-    </li>
-
-    <li>
-    シミュレーション完了まで：
-    ${prepaySim.monthsSimulated}か月
-    </li>
-
-    <li>
-    期間短縮の目安：
-    ${prepayTermSaved}か月
-    </li>
-
-    </ul>
-
-    </div>
-
-
-    <div class="scenario-card">
-
-    <h5>
-    ③ 固定金利等へ借換え：
-    ${v.refRate.toFixed(2)}%
-    </h5>
-
-    <ul>
-
-    <li>
-    諸費用：
-    ${man(v.refCost,0)}
-    （
-    ${v.refCostMode==='finance'
-        ?'ローンに上乗せ'
-        :'現金支払い'}
-    ）
-    </li>
-
-    <li>
-    借換後月額：約
-    <strong>${man(refMonthly,1)}</strong>
-    </li>
-
-    <li>
-    総支払：約
-    <strong>${man(refSim.totalPaid,0)}</strong>
-
-    ${
-        v.refCostMode==='cash'
-        ?
-        ' ＋ 現金諸費用 '+man(v.refCost,0)
-        :
-        '（諸費用を含む）'
-    }
-
-    </li>
-
-    </ul>
-
-    </div>
-
-
-    <div class="scenario-card">
-
-    <h5>
-    ④ 返済期間を5年延長する単純比較
-    </h5>
-
-    <ul>
-
-    <li>
-    延長後期間：
-    ${v.years+5}年
-    </li>
-
-    <li>
-    想定金利：
-    ${v.r5.toFixed(2)}%
-    </li>
-
-    <li>
-    毎月返済：約
-    <strong>${man(extMonthly,1)}</strong>
-    </li>
-
-    <li>
-    完済年齢の目安：
-    <strong>${v.age+v.years+5}歳</strong>
-    </li>
-
-    <li>
-    総利息：約
-    ${man(extSim.totalInterest,0)}
-    </li>
-
-    </ul>
-
-    </div>
-
-
-    <div class="scenario-card">
-
-    <h5>
-    ⑤ 希望月額を維持するための元本削減額
-    </h5>
-
-    <ul>
-
-    <li>
-    目標月額：
-    <strong>${man(v.target,1)}</strong>
-    </li>
-
-    <li>
-    5年後金利
-    ${v.r5.toFixed(2)}%
-    ・残期間 ${v.years}年を単純に前提とした
-    必要元本削減額：約
-    <strong>${man(requiredPrepay,0)}</strong>
-    </li>
-
-    </ul>
-
-    <div class="small">
-
-    これは「希望月額を満たすための逆算値」であり、
-    銀行の実際の繰上返済条件・手数料・
-    ボーナス設定は別途確認が必要です。
-
-    </div>
-
-    </div>
-
-
-    <div class="scenario-card">
-
-    <h5>
-    ⑥ 今すぐ売却する
-    </h5>
-
-    <ul>
-
-    <li>
-    想定売却価格：
-    ${man(v.home,0)}
-    </li>
-
-    <li>
-    仲介手数料等：
-    ${man(nowFee+v.otherSale,1)}
-    </li>
-
-    <li>
-    ローン決済額：
-    残高 ${man(v.balance,1)}
-    ＋ 未払利息 ${man(base.unpaidInterest,1)}
-    </li>
-
-    <li>
-    売却時収支：
-    <strong>
-    ${
-        nowNet>=0
-        ?
-        '手残り 約 '+man(nowNet,1)
-        :
-        '追い金 約 '+man(Math.abs(nowNet),1)
-    }
-    </strong>
-    </li>
-
-    </ul>
-
-    </div>
-
-    `;
-
-
-    document.getElementById(
-        'resSixScenarios'
-    ).innerHTML=six;
-
-
-    /* =========================
-       売却時収支
-    ========================= */
-
-    let sale=`
-
-    <p>
-    住宅価格は年率
-    ${(v.decline*100).toFixed(1)}%
-    で機械的に下落すると仮定しています。
-    売却時には仲介手数料・その他費用・
-    ローン決済額を差し引きます。
-    </p>
-
-    <table class="sim-table">
-
-    <tr>
-        <th>時点</th>
-        <th>想定売却価格</th>
-        <th>ローン残高</th>
-        <th>未払利息</th>
-        <th>売却費用</th>
-        <th>売却時収支</th>
-    </tr>
-
-    `;
-
-
-    [0,2,5].forEach(y=>{
-
-        const val=
-            v.home*
-            Math.pow(
-                1-v.decline,
-                y
-            );
-
-
-        const m=y*12;
-
-
-        const b=
-            findBalanceAt(
-                base,
-                m
-            );
-
-
-        const ui=
-            findUnpaidAt(
-                base,
-                m
-            );
-
-
-        const fee=
-            brokerFee(
-                val,
-                v.brokerType
-            )+
-            v.otherSale;
-
-
-        const net=
-            val-
-            fee-
-            b-
-            ui;
-
-
-        sale+=`
-
+    const tbody = document.getElementById('resultTableBody');
+    tbody.innerHTML = `
         <tr>
-
-        <td>
-        ${y===0?'今すぐ':y+'年後'}
-        </td>
-
-        <td>
-        ${man(val,1)}
-        </td>
-
-        <td>
-        ${man(b,1)}
-        </td>
-
-        <td>
-        ${man(ui,1)}
-        </td>
-
-        <td>
-        ${man(fee,1)}
-        </td>
-
-        <td style="font-weight:bold">
-
-        ${
-            net>=0
-            ?
-            '+'+man(net,1)+'（手残り）'
-            :
-            man(net,1)+'（追い金）'
-        }
-
-        </td>
-
+            <td>現在の毎月返済額（内利息分）</td>
+            <td class="result-value">初月利息約 ${Math.round(firstMonthInterest).toLocaleString()} 円</td>
+            <td>毎月の支払いのうち、多くが利息に消えている現実の確認</td>
         </tr>
-
-        `;
-
-    });
-
-
-    sale+=`
-
-    </table>
-
-    <div class="small">
-
-    ※売却価格の下落率は入力した仮定であり、
-    市場価格を予測するものではありません。
-
-    </div>
-
+        <tr>
+            <td>金利上昇後の毎月返済額</td>
+            <td class="result-value">${typeof postRateMonthlyPayment === 'number' ? Math.round(postRateMonthlyPayment).toLocaleString() + ' 円' : postRateMonthlyPayment}</td>
+            <td>${ruleDescription}</td>
+        </tr>
+        <tr>
+            <td>ローン完済時の年齢</td>
+            <td class="result-value">${finishAgeText}</td>
+            <td>定年退職（60〜65歳）以降にローンが残るかどうかの指標</td>
+        </tr>
+        <tr>
+            <td>マイカーローン等の影響</td>
+            <td class="result-value">${carLoanWarning}</td>
+            <td>${carLoan > 0 ? '借り換えや売却時に審査枠を圧迫するリスクがあります。' : '良好な状態です。'}</td>
+        </tr>
+        <tr>
+            <td>売却時の収支（手残り・追い金）</td>
+            <td class="result-value">${salesResultText}</td>
+            <td>仲介手数料・諸費用（一律平均含）と残債・車ローンを引いた試算</td>
+        </tr>
     `;
 
-
-    document.getElementById(
-        'resSaleTransition'
-    ).innerHTML=sale;
-
-
-    /* =========================
-       分岐点指標
-    ========================= */
-
-    const stagnationRate=
-        findBalanceStagnationRate(
-            v.balance,
-            months,
-            v.monthly
-        );
-
-
-    /*
-      現在の月額返済額と
-      年間利息を単純比較した金利。
-
-      ボーナス返済や5年ルール等は
-      考慮しない参考値。
-    */
-
-    const currentUnpaidThreshold=
-        v.monthly>0
-        ?
-        v.balance*100/(v.monthly*12)
-        :
-        0;
-
-
-    document.getElementById(
-        'resBifurcation'
-    ).innerHTML=`
-
-    <div class="metric-grid">
-
-        <div class="metric">
-
-            <div class="label">
-            独自指標：5年間で元金が減らなくなる金利
-            </div>
-
-            <div class="value">
-            約 ${stagnationRate.toFixed(2)}%
-            </div>
-
-        </div>
-
-
-        <div class="metric">
-
-            <div class="label">
-            現在の月額で利息だけを単純比較した金利
-            </div>
-
-            <div class="value">
-            約 ${currentUnpaidThreshold.toFixed(2)}%
-            </div>
-
-        </div>
-
-
-        <div class="metric">
-
-            <div class="label">
-            現在金利
-            </div>
-
-            <div class="value">
-            ${v.rate.toFixed(2)}%
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="small">
-
-    「元金停滞金利」は公的・契約上の基準ではなく、
-    このシミュレーターで
-    「現在の毎月返済額を維持した場合、
-    5年間後の残高が開始残高以上になる水準」
-    を二分探索した独自指標です。
-
-    「現在の月額で利息だけを単純比較した金利」も、
-    実際の5年ルール・125％上限・
-    ボーナス条件を含む契約判定ではありません。
-
-    </div>
-
-    `;
-
-
-    /* =========================
-       総合整理
-    ========================= */
-
-    const ageNow=
-        v.age;
-
-
-    const age5=
-        v.age+5;
-
-
-    let advice=`
-
-    <div class="alert-info-box">
-
-    <strong>📌 今回の試算から読めること</strong><br>
-
-    ① 金利上昇時は、同じ月額でも利息の割合が高くなり、
-    元金の減少速度が落ちる可能性があります。<br>
-
-    ② 5年・125％ルールを選択している場合、
-    金利上昇が「毎月返済額に即時反映されない」代わりに、
-    元金の減少が遅くなる局面を確認するためのモデルです。<br>
-
-    ③ 繰上返済は利息削減と返済期間短縮に寄与し得ますが、
-    手元資金を減らすため、教育費・修繕費・
-    生活防衛資金との兼ね合いが必要です。<br>
-
-    ④ 借換えは金利だけでなく、
-    諸費用を現金で払うかローンに組み込むかで
-    比較結果が変わります。<br>
-
-    ⑤ 売却は
-    「売却価格－売却費用－ローン決済額」
-    で確認するため、残債だけでなく
-    未払利息があればそれも考慮しています。
-
-    </div>
-
-    `;
-
-
-    if(base.totalUnpaidAccrued>0){
-
-        advice+=`
-
-        <div class="alert-danger-box">
-
-        ⚠ 未払利息が発生するシナリオです。
-
-        実際の契約で未払利息の扱い
-        （繰越・元金組入れ・期末精算など）
-        を確認してください。
-
-        </div>
-
-        `;
-
+    let adviceHtml = `現在、借入残高に対して金利上昇やライフイベントの重なりが家計に与える影響が見えてきました。<br>`;
+    let ageNum = currentAgeInput ? parseInt(currentAgeInput) : 40;
+    let yearsNum = parseInt(yearsInput);
+    
+    if (ageNum + yearsNum >= 65) {
+        adviceHtml += `⚠️ **【警告】完済時年齢が65歳以上になっています。** 定年後の収入減を見据え、繰上返済や期間短縮を計画的に検討するタイミングです。<br>`;
+    }
+    if (carLoan > 0) {
+        adviceHtml += `🚗 **【注意】マイカーローンの残債があります。** 住宅ローンの借り換えや住み替えを検討する際、別の借入があると銀行の審査が厳しくなるため、早期の完済や一本化を視野に入れてください。<br>`;
+    }
+    if (houseAgeInput && parseInt(houseAgeInput) >= 10) {
+        adviceHtml += `🏠 **【修繕の備え】築${houseAgeInput}年が経過しています。** 一般的に築10〜15年で外壁・屋根などの大型修繕（100万〜150万円規模）が必要になります。ローン以外の出費への備えも同時並行で進めましょう。`;
+    } else {
+        adviceHtml += `✨ 現在地を正しく把握できたことが第一歩です。焦って銀行に駆け込む前に、まずはご家族と今後のマネープランを話し合ってみてください。`;
     }
 
-
-    advice+=`
-
-    <div class="alert-warn-box">
-
-    このシミュレーターは
-    「金利がこう動いたらどうなるか」
-    を比較する道具です。
-
-    金利・住宅価格・家計収入・教育費・修繕費は
-    確定値ではないため、
-    1つの結果だけで判断せず、
-    複数の金利ケースと手元資金を並べて
-    確認するのがおすすめです。
-
-    現在年齢 ${ageNow}歳、
-    5年後 ${age5}歳。
-
-    </div>
-
-    `;
-
-
-    document.getElementById(
-        'resSummaryAdvice'
-    ).innerHTML=advice;
-
-
-    /* =========================
-       結果表示
-    ========================= */
-
-    const box=
-        document.getElementById(
-            'resultBox'
-        );
-
-
-    box.style.display='block';
-
-
-    box.scrollIntoView({
-        behavior:'smooth'
-    });
-
+    document.getElementById('expertAdviceText').innerHTML = adviceHtml;
+    document.getElementById('summaryText').innerText = `【現在地チェック完了】借入残高 ${parseFloat(principalInput).toLocaleString()} 万円のライフプラン試算結果です。`;
+    document.getElementById('resultCard').style.display = 'block';
 }
-
 </script>
 
 </body>
