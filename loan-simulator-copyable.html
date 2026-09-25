@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>住宅ローン・家計の健康診断＆未来シミュレーター</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6f8;color:#263238;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Noto Sans JP",Arial,sans-serif;line-height:1.7}.wrap{max-width:1080px;margin:auto;background:#fff;min-height:100vh;padding:24px}.hero{background:#145da0;color:#fff;padding:24px;border-radius:14px}.hero h1{margin:0 0 8px;font-size:27px}.hero p{margin:0;opacity:.95}.intro{margin:18px 0;padding:18px;border:1px solid #b8daf5;background:#eef7ff;border-radius:12px}.section{margin-top:28px}.section h2{font-size:20px;margin:0 0 12px;border-left:5px solid #145da0;padding:8px 12px;background:#f4f7f9}.card{border:1px solid #dfe6e9;border-radius:10px;padding:18px;margin-bottom:14px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.field label{display:block;font-weight:700;font-size:14px;margin-bottom:5px}.field input,.field select{width:100%;padding:10px;border:1px solid #cfd8dc;border-radius:7px;font-size:15px;background:#fff}.help{font-size:12px;color:#607d8b;margin-top:5px}.assume{background:#fff8e1;border:1px solid #ffe082;border-radius:7px;padding:8px 10px;font-size:12px;margin-top:6px}.real{background:#edf7ed;border:1px solid #c8e6c9;color:#2e7d32}.auto{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:12px;color:#795548}.auto input{width:auto}.btn{width:100%;padding:16px;border:0;border-radius:9px;background:#145da0;color:#fff;font-size:17px;font-weight:700;cursor:pointer;margin-top:20px}.result{display:none;margin-top:35px}.resultHead{background:#145da0;color:#fff;padding:20px;border-radius:12px;margin-bottom:16px}.resultHead h2{margin:0 0 6px}.box{border:1px solid #dfe6e9;border-radius:12px;padding:18px;margin-bottom:16px}.box h3{margin:0 0 13px;color:#145da0}.current{border:2px solid #145da0;background:#f8fbff}.currentHero{font-size:25px;font-weight:800;color:#145da0}.sub{font-size:13px;color:#546e7a}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.metric{background:#fff;border:1px solid #e1e8ed;border-radius:9px;padding:12px}.metric small{color:#607d8b}.metric strong{display:block;font-size:21px}.notice{padding:12px;border-radius:8px;margin-top:12px;background:#eef7ff;border:1px solid #bbdefb}.warn{padding:12px;border-radius:8px;margin-top:12px;background:#fff8e1;border:1px solid #ffe082}.danger{padding:12px;border-radius:8px;margin-top:12px;background:#ffebee;border:1px solid #ffcdd2}.good{padding:12px;border-radius:8px;margin-top:12px;background:#edf7ed;border:1px solid #c8e6c9}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #dfe6e9;padding:8px}th{background:#f4f7f9;text-align:center}td{text-align:right}td:first-child{text-align:left}.tag{display:inline-block;padding:2px 7px;border-radius:999px;font-size:11px;background:#fff8e1;border:1px solid #ffe082;color:#795548}.copyNote{font-size:12px;color:#607d8b;margin-top:8px}.list{margin:0;padding-left:20px}.bankq{padding:10px 12px;border-left:4px solid #607d8b;background:#fafafa;margin:7px 0}.foot{font-size:12px;color:#607d8b}.hidden{display:none}@media(max-width:750px){.wrap{padding:12px}.grid,.grid3,.metrics{grid-template-columns:1fr}.hero h1{font-size:23px}table{font-size:11px}th,td{padding:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<h1>住宅ローン・家計の健康診断＆未来シミュレーター</h1>
+<p>「数字を見る前に、まず自分の現在地を知る」ためのナビゲーションツール</p>
+</div>
+
+<div class="intro">
+<strong>このツールの考え方</strong><br>
+住宅ローンの知識を売るのではなく、分からない人でも「自分は今どこにいるのか」を確認できるところまで案内します。<br>
+分からない項目は、診断を止めずに<strong>一般的な仮定値</strong>を入れて先へ進めます。仮定値には必ず「仮定」と表示し、実際の数字が分かったら置き換えられるようにします。<br>
+結果は「危険・安心」を断定するものではありません。現在地→未来→備え→銀行に確認すること、の順番で整理します。
+</div>
+
+<form id="form">
+
+<div class="section"><h2>STEP 1　住宅ローンの基本</h2><div class="card">
+<div class="grid">
+<div class="field"><label>現在のローン残高（万円）</label><input id="balance" type="number" value="3200" min="0"><div class="help">返済予定表・銀行アプリ等に記載されています。</div><label class="auto"><input id="balanceUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>現在の適用金利（％）</label><input id="rate" type="number" step=".01" value="1.3" min="0"><div class="help">「適用金利」「借入利率」を確認してください。</div><label class="auto"><input id="rateUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>残りの返済期間（年）</label><input id="years" type="number" value="30" min="1" max="50"><label class="auto"><input id="yearsUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>現在の毎月返済額（万円）</label><input id="payment" type="number" step=".1" value="10.8" min="0"><div class="help">分からない場合は残高・金利・期間から概算します。</div><label class="auto"><input id="paymentUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+</div>
+<div class="grid">
+<div class="field"><label>金利タイプ</label><select id="loanType"><option value="variable">変動金利</option><option value="fixed_period">固定期間選択型</option><option value="fixed">全期間固定</option><option value="unknown">分からない</option></select></div>
+<div class="field"><label>返済方式</label><select id="method"><option value="equal">元利均等</option><option value="principal">元金均等</option><option value="unknown">分からない</option></select></div>
+</div>
+<div class="grid">
+<div class="field"><label>5年ルール</label><select id="five"><option value="yes">ある</option><option value="no">ない</option><option value="unknown">分からない</option></select></div>
+<div class="field"><label>125％ルール</label><select id="cap"><option value="yes">ある</option><option value="no">ない</option><option value="unknown">分からない</option></select></div>
+</div>
+</div></div>
+
+<div class="section"><h2>STEP 2　家計の現在地</h2><div class="card">
+<div class="grid3">
+<div class="field"><label>世帯手取り月収（万円）</label><input id="income" type="number" step=".1" value="30"><label class="auto"><input id="incomeUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>年間ボーナス手取り（万円）</label><input id="bonus" type="number" value="60" min="0"><label class="auto"><input id="bonusUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>預貯金・金融資産（万円）</label><input id="savings" type="number" value="300" min="0"><label class="auto"><input id="savingsUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>毎月の生活費（住宅ローン除く・万円）</label><input id="living" type="number" step=".1" value="20" min="0"><label class="auto"><input id="livingUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>車関連費（月・万円）</label><input id="car" type="number" step=".1" value="3" min="0"><label class="auto"><input id="carUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>生活防衛資金として残す額（万円）</label><input id="emergency" type="number" value="200" min="0"><label class="auto"><input id="emergencyUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+</div>
+</div></div>
+
+<div class="section"><h2>STEP 3　家族・家の時間軸</h2><div class="card">
+<div class="grid3">
+<div class="field"><label>世帯主年齢</label><input id="age" type="number" value="42" min="18" max="90"><label class="auto"><input id="ageUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>子どもの年齢</label><input id="children" type="text" placeholder="例：10,6"><div class="help">分からなければ空欄でも構いません。</div></div>
+<div class="field"><label>家の築年数</label><input id="houseAge" type="number" value="10" min="0"><label class="auto"><input id="houseAgeUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>収入減少を意識する年齢</label><input id="retire" type="number" value="65" min="40"><label class="auto"><input id="retireUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+</div>
+</div></div>
+
+<div class="section"><h2>STEP 4　未来の仮定</h2><div class="card">
+<div class="grid3">
+<div class="field"><label>5年後の想定金利（％）</label><input id="futureRate" type="number" step=".01" value="2.0" min="0"><div class="help">予測ではなく「もし2％なら」というシナリオです。</div></div>
+<div class="field"><label>10年間の住宅修繕予算（万円）</label><input id="repair" type="number" value="150" min="0"><label class="auto"><input id="repairUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+<div class="field"><label>10年間の教育費予算（万円）</label><input id="education" type="number" value="300" min="0"><label class="auto"><input id="educationUnknown" type="checkbox"> 分からない → 仮定値を使用</label></div>
+</div>
+</div></div>
+
+<button class="btn" type="button" onclick="run()">現在地を確認して、未来をシミュレーションする</button>
+</form>
+
+<div id="result" class="result">
+<div class="resultHead"><h2>あなたの住宅ローン・家計の現在地</h2><div>まず現在地を確認し、そのあと未来のシナリオを見ます。</div></div>
+
+<div class="box current"><h3>🚩 最初に見る「現在地」</h3><div id="position"></div></div>
+<div class="box"><h3>入力値と仮定値</h3><div id="assumptionSummary"></div></div>
+<div class="box"><h3>住宅ローンの現在と5年後</h3><div id="loanResult"></div></div>
+<div class="box"><h3>家計の体力</h3><div id="householdResult"></div></div>
+<div class="box"><h3>今後10年間に重なるもの</h3><div id="futureResult"></div></div>
+<div class="box"><h3>繰上返済を考える場合</h3><div id="prepayResult"></div></div>
+<div class="box"><h3>銀行に確認すること</h3><div id="bankResult"></div></div>
+<div class="box"><h3>この結果の読み方</h3><div id="summaryResult"></div></div>
+</div>
+</div>
+
+<script>
+const ASSUME={
+ balance:3200, rate:1.3, years:30, payment:10.8,
+ income:30, bonus:60, savings:300, living:20, car:3, emergency:200,
+ age:42, houseAge:10, retire:65, repair:150, education:300
+};
+
+function n(id){return Number(document.getElementById(id).value)||0}
+function checked(id){return document.getElementById(id).checked}
+function fmt(v,dec=0){return Math.round(v).toLocaleString('ja-JP',{maximumFractionDigits:dec})+'万円'}
+function yen(v){return fmt(v/10000,1)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function pmt(principal,annual,months){
+ if(months<=0)return 0;
+ const r=annual/100/12;
+ if(r===0)return principal/months;
+ return principal*r*Math.pow(1+r,months)/(Math.pow(1+r,months)-1);
+}
+function loanSim(balance,annual,years){
+ const m=Math.max(1,Math.round(years*12)), pay=pmt(balance,annual,m);
+ let b=balance, interest=0;
+ for(let i=0;i<m;i++){const r=b*annual/100/12;const pr=Math.min(b,Math.max(0,pay-r));interest+=r;b-=pr;if(b<.0001){b=0;break}}
+ return {pay,interest,b};
+}
+function childArray(){
+ return (document.getElementById('children').value||'').split(',').map(x=>Number(x.trim())).filter(x=>Number.isFinite(x)&&x>=0)
+}
+function getValue(id,key){
+ const el=document.getElementById(id), use=checked(id+'Unknown');
+ return {value:use?ASSUME[key]:n(id), assumed:use};
+}
+function mark(label,v,assumed){
+ return `<div><strong>${label}</strong> ${fmt(v)} ${assumed?'<span class="tag">仮定値</span>':'<span class="tag real">入力値</span>'}</div>`;
+}
+function run(){
+ const vals={};
+ ['balance','rate','years','payment','income','bonus','savings','living','car','emergency','age','houseAge','retire','repair','education'].forEach(k=>{const x=getValue(k,k);vals[k]=x.value;vals[k+'Assumed']=x.assumed});
+ const children=childArray();
+ const five=document.getElementById('five').value, cap=document.getElementById('cap').value;
+ const method=document.getElementById('method').value;
+ const loanType=document.getElementById('loanType').value;
+ const futureRate=n('futureRate');
+ const months=Math.max(1,Math.round(vals.years*12));
+ const theoretical=pmt(vals.balance,vals.rate,months);
+ const monthly=vals.paymentAssumed?theoretical:vals.payment;
+ const housingRatio=vals.income>0?monthly/vals.income*100:0;
+ const monthlyHousehold=monthly+vals.living+vals.car;
+ const annualIncome=vals.income*12+vals.bonus;
+ const annualDebt=monthly*12;
+ const debtRatio=annualIncome>0?annualDebt/annualIncome*100:0;
+ const futureLoan=loanSim(vals.balance, futureRate, vals.years);
+ const currentLoan=loanSim(vals.balance, vals.rate, vals.years);
+ const fiveLoan=loanSim(vals.balance, futureRate, Math.max(1,vals.years-5));
+ const fivePayment=five==='yes'?Math.min(fiveLoan.pay,monthly*(cap==='yes'?1.25:999)):fiveLoan.pay;
+ const interestIncrease=Math.max(0,futureLoan.interest-currentLoan.interest);
+ const futureLarge=vals.repair+vals.education;
+ const liquidAfterEmergency=Math.max(0,vals.savings-vals.emergency);
+ const gap=Math.max(0,futureLarge-liquidAfterEmergency);
+ const endAge=vals.age+vals.years;
+ const childText=children.length?children.map(a=>`現在${a}歳`).join('・'):'子どもの年齢は未入力';
+ const assumedCount=Object.keys(vals).filter(k=>k.endsWith('Assumed')&&vals[k]).length;
+
+ let headline='現在地を確認するための情報がそろっています。';
+ let tone='good';
+ const notes=[];
+ if(housingRatio>=30){headline='住宅ローンが家計の中で大きな割合を占めています。';tone='warn'}
+ else if(housingRatio>=25){headline='住宅ローンが家計の中で無視できない割合を占めています。';tone='warn'}
+ if(gap>0){notes.push(`10年間の大型支出と生活防衛資金を除いた資金には、約${fmt(gap)}の差があります。`)}
+ if(futureRate>vals.rate){notes.push(`5年後に金利が${futureRate.toFixed(2)}％になるシナリオでは、返済額と元金の減り方を確認する必要があります。`)}
+ if(endAge>=vals.retire){notes.push(`完済時年齢は約${endAge}歳。収入減少を意識する${vals.retire}歳以降にも返済が残ります。`)}
+ if(vals.houseAge>=10){notes.push(`築${vals.houseAge}年のため、住宅ローンとは別に修繕資金を考える時期です。`)}
+ document.getElementById('position').innerHTML=`
+ <div class="currentHero">${headline}</div>
+ <div class="sub">これは「危険・安心」の判定ではなく、入力条件から見える確認ポイントです。</div>
+ <div class="metrics">
+ <div class="metric"><small>住宅ローン</small><strong>${fmt(monthly,1)}/月</strong><small>手取り比 ${housingRatio.toFixed(1)}%</small></div>
+ <div class="metric"><small>世帯手取り</small><strong>${fmt(vals.income,1)}/月</strong><small>＋賞与 ${fmt(vals.bonus)}</small></div>
+ <div class="metric"><small>金融資産</small><strong>${fmt(vals.savings)}</strong><small>防衛資金後 ${fmt(liquidAfterEmergency)}</small></div>
+ <div class="metric"><small>家計支出</small><strong>${fmt(monthlyHousehold,1)}/月</strong><small>住宅ローン＋生活＋車</small></div>
+ </div>
+ <div class="${tone==='warn'?'warn':'good'}"><strong>今の確認ポイント</strong><br>${notes.length?notes.map(esc).join('<br>'):'入力条件だけでは大きな確認ポイントは自動検出されませんでした。返済予定表との照合をおすすめします。'}</div>`;
+
+ document.getElementById('assumptionSummary').innerHTML=`
+ ${mark('ローン残高',vals.balance,vals.balanceAssumed)}
+ ${mark('現在金利',vals.rate,vals.rateAssumed)}
+ ${mark('残り期間',vals.years,vals.yearsAssumed)}
+ ${mark('毎月返済',monthly,vals.paymentAssumed)}
+ ${mark('手取り月収',vals.income,vals.incomeAssumed)}
+ ${mark('金融資産',vals.savings,vals.savingsAssumed)}
+ ${mark('生活費',vals.living,vals.livingAssumed)}
+ ${mark('車関連費',vals.car,vals.carAssumed)}
+ ${mark('修繕費',vals.repair,vals.repairAssumed)}
+ ${mark('教育費',vals.education,vals.educationAssumed)}
+ <div class="notice">仮定値は「平均的な正解」ではありません。分からない項目を止めずに診断するための入口です。実際の数字が分かったら必ず置き換えてください。</div>`;
+
+ document.getElementById('loanResult').innerHTML=`
+ <table><tr><th>項目</th><th>現在</th><th>5年後シナリオ</th></tr>
+ <tr><td>金利</td><td>${vals.rate.toFixed(2)}%</td><td>${futureRate.toFixed(2)}%</td></tr>
+ <tr><td>毎月返済の目安</td><td>${fmt(monthly,1)}</td><td>${fmt(fivePayment,1)}</td></tr>
+ <tr><td>5年後以降の単純返済額</td><td>—</td><td>${fmt(futureLoan.pay,1)}</td></tr>
+ <tr><td>総利息の単純比較</td><td>${fmt(currentLoan.interest)}</td><td>${fmt(futureLoan.interest)}</td></tr></table>
+ <div class="notice">5年後シナリオは予測ではありません。「もし金利が${futureRate.toFixed(2)}％になったら」を見るための仮定です。5年ルール・125％ルールの実際の扱いは金融機関との契約が優先されます。</div>
+ ${futureRate>vals.rate?`<div class="warn"><strong>ここで見るべきなのは「月返済額」だけではありません。</strong><br>金利が上がると、同じ返済額でも利息に回る割合が増え、元金の減り方が変わる可能性があります。</div>`:''}`;
+
+ document.getElementById('householdResult').innerHTML=`
+ <div class="metrics">
+ <div class="metric"><small>住宅ローン負担率</small><strong>${housingRatio.toFixed(1)}%</strong><small>手取り月収比</small></div>
+ <div class="metric"><small>年間返済額</small><strong>${fmt(annualDebt/10000,0)}</strong><small>年間手取り ${fmt(annualIncome/10000,0)}</small></div>
+ <div class="metric"><small>月の生活余力</small><strong>${fmt(Math.max(0,vals.income-monthlyHousehold),1)}</strong><small>入力支出ベース</small></div>
+ <div class="metric"><small>防衛資金後</small><strong>${fmt(liquidAfterEmergency)}</strong><small>金融資産－防衛資金</small></div>
+ </div>
+ <div class="notice">家計負担率は目安です。食費・通信費・保険・税・教育費など、入力していない支出があれば結果は変わります。</div>`;
+
+ document.getElementById('futureResult').innerHTML=`
+ <div class="grid">
+ <div class="card"><strong>今後10年間の住宅修繕</strong><br>${fmt(vals.repair)} ${vals.repairAssumed?'<span class="tag">仮定値</span>':''}</div>
+ <div class="card"><strong>今後10年間の教育費</strong><br>${fmt(vals.education)} ${vals.educationAssumed?'<span class="tag">仮定値</span>':''}</div>
+ </div>
+ <div class="${gap>0?'warn':'good'}"><strong>手元資金との関係</strong><br>${gap>0?`大型支出 ${fmt(futureLarge)} に対し、防衛資金を除いた資金は ${fmt(liquidAfterEmergency)}。単純計算で約${fmt(gap)}不足します。`:`現在の仮定では、防衛資金を除いた資金で大型支出を概算上まかなえます。`}</div>
+ <div class="notice">教育費・修繕費は家庭・住宅によって大きく異なります。ここも「平均的な仮定」から始め、分かった時点で更新してください。</div>`;
+
+ const safePrepay=Math.max(0,vals.savings-vals.emergency);
+ const interestSave=Math.max(0,currentLoan.interest-loanSim(Math.max(0,vals.balance-safePrepay),vals.rate,vals.years).interest);
+ document.getElementById('prepayResult').innerHTML=`
+ <div class="metrics"><div class="metric"><small>現時点の金融資産</small><strong>${fmt(vals.savings)}</strong></div><div class="metric"><small>残したい防衛資金</small><strong>${fmt(vals.emergency)}</strong></div><div class="metric"><small>概算で使える上限</small><strong>${fmt(safePrepay)}</strong></div><div class="metric"><small>単純な利息削減目安</small><strong>${fmt(interestSave)}</strong></div></div>
+ <div class="warn"><strong>「利息が減る＝繰上返済すべき」とは限りません。</strong><br>教育費、修繕費、車、収入減少などに備える現金とのバランスを確認してください。</div>`;
+
+ const q=[];
+ if(vals.balanceAssumed)q.push('現在のローン残高はいくらですか？');
+ if(vals.rateAssumed)q.push('現在の適用金利は何％ですか？');
+ if(vals.yearsAssumed)q.push('完済予定日はいつですか？');
+ if(loanType==='unknown')q.push('金利タイプは変動・固定期間選択・全期間固定のどれですか？');
+ if(five==='unknown')q.push('5年ルールはこの契約に適用されていますか？');
+ if(cap==='unknown')q.push('125％ルールはこの契約に適用されていますか？');
+ q.push('金利が1％上がった場合の返済額と元金返済額を試算してもらえますか？');
+ q.push('返済額が利息を下回った場合、差額はどう扱われますか？');
+ q.push('繰上返済・借換えにかかる費用はいくらですか？');
+ document.getElementById('bankResult').innerHTML=q.map((x,i)=>`<div class="bankq"><strong>${i+1}.</strong> ${esc(x)}</div>`).join('');
+
+ document.getElementById('summaryResult').innerHTML=`
+ <div class="notice"><strong>この診断で一番大切なのは、数字の正しさより「次に何を確認するか」です。</strong><br>
+ 現在は${assumedCount}項目に仮定値が入っています。仮定値が多いほど、この結果は「家計の現在地を知る入口」と考えてください。</div>
+ <ul class="list">
+ <li>${esc(childText)}</li>
+ <li>築年数：${vals.houseAge}年</li>
+ <li>完済時年齢：約${endAge}歳</li>
+ <li>収入減少を意識する年齢：${vals.retire}歳</li>
+ </ul>
+ <div class="foot">※本ツールは金融機関の返済予定表や融資契約を置き換えるものではありません。税制、社会保険、教育費、不動産価格、修繕費、金利変更日などは個別条件で変わります。</div>`;
+
+ document.getElementById('result').style.display='block';
+ document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+document.querySelectorAll('input[type=checkbox]').forEach(c=>{
+ c.addEventListener('change',()=>{
+   const base=c.id.replace('Unknown','');
+   const el=document.getElementById(base);
+   if(!el)return;
+   if(c.checked){el.dataset.before=el.value;el.value=ASSUME[base]??el.value;el.classList.add('assumedInput')}
+   else{el.classList.remove('assumedInput')}
+ })
+});
+</script>
+</body>
+</html>
